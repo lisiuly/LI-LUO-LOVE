@@ -13,38 +13,67 @@
     </script>
 </head>
 <body>
-    <!-- ====== 登录页面 ====== -->
+    <!-- ====== 登录页面 (LG-NewUi Style) ====== -->
     <div id="loginPage" class="login-page">
-        <div class="login-overlay"></div>
+        <!-- 背景装饰 -->
+        <div class="login-bg-deco">
+            <div class="bg-circle c1"></div>
+            <div class="bg-circle c2"></div>
+            <div class="bg-circle c3"></div>
+        </div>
         <div class="login-container">
-            <div class="login-card">
-                <div class="login-decoration">
-                    <span class="deco-heart">?</span>
-                    <span class="deco-star">?</span>
-                    <span class="deco-heart">?</span>
-                </div>
-                <div class="login-avatar">
-                    <div class="avatar-circle">
-                        <span class="avatar-emoji">?</span>
+            <!-- 左：简介区 -->
+            <div class="login-intro">
+                <div class="intro-profiles">
+                    <div class="profile-item she">
+                        <div class="profile-avatar">
+                            <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="希宝" class="profile-img">
+                        </div>
+                        <span class="profile-name">希宝</span>
+                    </div>
+                    <div class="profile-divider">
+                        <span class="divider-heart">💕</span>
+                    </div>
+                    <div class="profile-item he">
+                        <div class="profile-avatar">
+                            <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="小李" class="profile-img">
+                        </div>
+                        <span class="profile-name">小李</span>
                     </div>
                 </div>
-                <h1 class="login-title">希宝 & 小李</h1>
-                <p class="login-subtitle">? 我们的秘密花园 ?</p>
-                <div class="login-form">
-                    <div class="password-wrapper">
-                        <span class="password-icon">?</span>
-                        <input type="password" id="passwordInput" class="password-input" placeholder="请输入密码..." maxlength="4" autocomplete="off">
-                    </div>
-                    <button id="loginBtn" class="login-btn">? 解锁 ?</button>
-                    <p id="loginError" class="login-error">? 密码不对哦，再试试～</p>
-                </div>
-                <div class="login-hint">
-                    <span>? 提示：她的生日 ?</span>
-                </div>
-                <div class="login-flowers">
-                    ? ? ? ? ? ?
+                <div class="intro-counter">
+                    <div class="counter-label">💌 我们相爱已经</div>
+                    <div class="counter-big" id="loginDaysDisplay">0 天</div>
+                    <div class="counter-sub" id="loginTimeDisplay">0时 0分 0秒</div>
                 </div>
             </div>
+            <!-- 右：解锁区 -->
+            <div class="login-unlock">
+                <div class="unlock-card">
+                    <div class="unlock-icon">🔐</div>
+                    <h1 class="unlock-title">秘密花园</h1>
+                    <p class="unlock-sub">请输入我们的专属密码</p>
+                    <div class="unlock-form">
+                        <input type="password" id="passwordInput" class="unlock-input" placeholder="输入暗号" maxlength="4" autocomplete="off">
+                        <button id="loginBtn" class="unlock-btn">
+                            <span class="btn-text">解锁时光</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+                    <p id="loginError" class="unlock-error">😅 密码不对哦，再试试～</p>
+                    <div class="unlock-hint">
+                        <span>💡 提示：她的生日 (0616)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 底部装饰 -->
+        <div class="login-footer-deco">
+            <span>🐾</span>
+            <span>💕</span>
+            <span>✨</span>
+            <span>💕</span>
+            <span>🐾</span>
         </div>
         <!-- 飘落花瓣 -->
         <div class="petals-container" id="petalsContainer"></div>
@@ -55,17 +84,18 @@
         <!-- 顶部导航 -->
         <nav class="top-nav">
             <div class="nav-brand">
-                <span class="brand-icon">?</span>
+                <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="brand-icon-img">
                 <span class="brand-text">希宝 & 小李</span>
+                <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="brand-icon-img">
             </div>
             <div class="nav-links" id="navLinks">
-                <a href="#" class="nav-item active" data-page="home">? 首页</a>
-                <a href="#" class="nav-item" data-page="plans">? 计划书</a>
-                <a href="#" class="nav-item" data-page="diary">? 恋爱日记</a>
-                <a href="#" class="nav-item" data-page="recipe">? 食谱日记</a>
-                <a href="#" class="nav-item" data-page="photos">? 照片墙</a>
+                <a href="#" class="nav-item active" data-page="home">🏠 首页</a>
+                <a href="#" class="nav-item" data-page="plans">📋 计划书</a>
+                <a href="#" class="nav-item" data-page="diary">📔 恋爱日记</a>
+                <a href="#" class="nav-item" data-page="recipe">🍳 食谱日记</a>
+                <a href="#" class="nav-item" data-page="photos">📸 照片墙</a>
             </div>
-            <button class="nav-toggle" id="navToggle">?</button>
+            <button class="nav-toggle" id="navToggle">☰</button>
         </nav>
 
         <!-- 页面内容 -->
@@ -74,59 +104,146 @@
             <section id="page-home" class="page active">
                 <div class="home-hero">
                     <div class="hero-bg-decoration">
-                        <span>?</span><span>?</span><span>?</span><span>?</span><span>?</span>
+                        <span>�</span><span>✨</span><span>☕</span><span>✨</span><span>🌸</span>
+                    </div>
+                    <div class="hero-characters">
+                        <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="hero-char-img">
+                        <span class="char-heart">💕</span>
+                        <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="hero-char-img">
                     </div>
                     <div class="hero-title">
                         <h1>欢迎来到我们的世界</h1>
-                        <p class="hero-subtitle">希宝 ? 小李</p>
+                        <p class="hero-subtitle">希宝 🐶  &amp;  小李 🐻</p>
+                    </div>
+                    <div class="hero-paws">
+                        <span>🐾</span><span>🐾</span><span>🐾</span>
                     </div>
                 </div>
-
+                <!-- 希宝生日倒计时条 -->
+                <div class="birthday-banner" id="birthdayBanner">
+                    <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="banner-icon">
+                    <span class="banner-text">🎂 希宝生日倒计时 🎂</span>
+                    <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="banner-icon">
+                </div>
+                <!-- 生日视频区 -->
+                <div class="birthday-video-section" id="birthdayVideoSection">
+                    <p class="video-hint">🎬 希宝的生日祝福视频</p>
+                    <video id="birthdayVideo" class="birthday-video" controls preload="metadata">
+                        <source src="images/bg/生日.mp4" type="video/mp4">
+                        你的浏览器不支持视频播放～
+                    </video>
+                </div>
                 <div class="counters-grid">
-                    <div class="counter-card">
-                        <div class="counter-icon">?</div>
-                        <div class="counter-label">在一起已经</div>
-                        <div class="counter-value" id="daysTogether">0</div>
-                        <div class="counter-unit">天</div>
-                        <div class="counter-detail" id="togetherDetail">0年 0个月 0天</div>
+                    <div class="counter-card timer-card">
+                        <div class="counter-icon">
+                            <img src="images/icons/256b0b3b08994bf7924d90abae57e78c.png" alt="couple" class="counter-icon-img">
+                        </div>
+                        <div class="counter-label">我们已经一起走过</div>
+                        <div class="timer-display" id="timerDisplay">
+                            <div class="timer-block">
+                                <span class="timer-num" id="timerDays">0</span>
+                                <span class="timer-label">天</span>
+                            </div>
+                            <span class="timer-sep">|</span>
+                            <div class="timer-block">
+                                <span class="timer-num" id="timerHours">0</span>
+                                <span class="timer-label">时</span>
+                            </div>
+                            <span class="timer-sep">|</span>
+                            <div class="timer-block">
+                                <span class="timer-num" id="timerMinutes">0</span>
+                                <span class="timer-label">分</span>
+                            </div>
+                            <span class="timer-sep">|</span>
+                            <div class="timer-block">
+                                <span class="timer-num" id="timerSeconds">0</span>
+                                <span class="timer-label">秒</span>
+                            </div>
+                        </div>
+                        <div class="timer-sub" id="togetherDetail">2021.06.26 ❤️  forever</div>
                     </div>
                     <div class="counter-card">
-                        <div class="counter-icon">?</div>
+                        <div class="counter-icon">🎂</div>
                         <div class="counter-label">距离希宝生日还有</div>
                         <div class="counter-value" id="birthdayCountdown">0</div>
                         <div class="counter-unit">天</div>
-                        <div class="counter-detail">6月16日 ?</div>
+                        <div class="counter-detail">6月16日 🎉</div>
                     </div>
                 </div>
 
                 <div class="love-quote-card">
-                    <div class="quote-icon">?</div>
-                    <div class="quote-text" id="loveQuote">你是我的全世界 ??</div>
-                    <div class="quote-change" onclick="changeQuote()">换一句 ?</div>
+                    <div class="quote-icon">💬</div>
+                    <div class="quote-text" id="loveQuote">你是我的全世界 💕😊</div>
+                    <div class="quote-change" onclick="changeQuote()">换一句 🔄</div>
+                </div>
+
+                <!-- ===== 今日三卡片 ===== -->
+                <div class="daily-grid">
+                    <!-- 天气 -->
+                    <div class="daily-card weather-card">
+                        <div class="daily-card-header">
+                            <img src="images/icons/1e161ab6a4174d60a138bf98006746e0.png" alt="☀️" class="daily-card-icon-img">
+                            <span class="daily-card-title">🌤️ 今日天气</span>
+                        </div>
+                        <div class="weather-content" id="weatherContent">
+                            <div class="weather-loading">正在获取天气...</div>
+                        </div>
+                        <div class="weather-location" id="weatherLocation">
+                            <span>📍</span>
+                            <input type="text" id="cityInput" placeholder="输入城市名" value="深圳">
+                            <button id="cityBtn" class="weather-city-btn">查询</button>
+                        </div>
+                    </div>
+
+                    <!-- 今日运势 -->
+                    <div class="daily-card fortune-card">
+                        <div class="daily-card-header">
+                            <img src="images/icons/4f79f33216ec440984d40fa22e5f55af.png" alt="🔮" class="daily-card-icon-img">
+                            <span class="daily-card-title">🔮 今日运势</span>
+                        </div>
+                        <div class="fortune-content" id="fortuneContent">
+                            <div class="fortune-loading">正在占卜...</div>
+                        </div>
+                        <button class="fortune-refresh" onclick="refreshFortune()">🔄 换一个</button>
+                    </div>
+
+                    <!-- 恋爱任务 -->
+                    <div class="daily-card task-card">
+                        <div class="daily-card-header">
+                            <img src="images/icons/256b0b3b08994bf7924d90abae57e78c.png" alt="❤️" class="daily-card-icon-img">
+                            <span class="daily-card-title">✅ 今日恋爱任务</span>
+                        </div>
+                        <div class="task-content" id="taskContent">
+                            <div class="task-loading">加载中...</div>
+                        </div>
+                        <button class="task-refresh" onclick="refreshTask()">🔄 换一个</button>
+                    </div>
                 </div>
 
                 <div class="milestone-section">
-                    <h2 class="section-title">? 我们的里程碑</h2>
+                    <h2 class="section-title">🐾 我们的里程碑</h2>
                     <div class="milestone-list" id="milestoneList">
                         <div class="milestone-item achieved">
-                            <span class="milestone-icon">?</span>
+                            <span class="milestone-icon">
+                                <img src="images/icons/d1995eade6184e4a9e744fc4c9c9c076.png" alt="couple" class="milestone-icon-img">
+                            </span>
                             <span class="milestone-date">2021-06-26</span>
-                            <span class="milestone-text">? 我们在一起啦！</span>
+                            <span class="milestone-text">🎉 我们在一起啦！</span>
                         </div>
                         <div class="milestone-item achieved">
-                            <span class="milestone-icon">?</span>
+                            <span class="milestone-icon">🎊</span>
                             <span class="milestone-date" id="milestone100">计算中...</span>
-                            <span class="milestone-text">? 在一起100天！</span>
+                            <span class="milestone-text">🎉 在一起100天！</span>
                         </div>
                         <div class="milestone-item achieved">
-                            <span class="milestone-icon">?</span>
+                            <span class="milestone-icon">🎂</span>
                             <span class="milestone-date" id="milestone365">计算中...</span>
-                            <span class="milestone-text">? 在一起一周年！</span>
+                            <span class="milestone-text">🎉 在一起一周年！</span>
                         </div>
                         <div class="milestone-item">
-                            <span class="milestone-icon">?</span>
+                            <span class="milestone-icon">🎯</span>
                             <span class="milestone-date">2026-06-26</span>
-                            <span class="milestone-text">? 五周年纪念日！</span>
+                            <span class="milestone-text">🎉 五周年纪念日！</span>
                         </div>
                     </div>
                 </div>
@@ -134,8 +251,8 @@
 
             <!-- ===== 计划书 ===== -->
             <section id="page-plans" class="page">
-                <h2 class="page-title">? 我们的计划书</h2>
-                <p class="page-desc">一起要做的100件事 ??</p>
+                <h2 class="page-title">📋 我们的计划书</h2>
+                <p class="page-desc">一起要做的100件事 💑💕</p>
                 
                 <div class="plans-stats">
                     <span>已完成: <strong id="plansDone">0</strong> / <span id="plansTotal">0</span></span>
@@ -149,27 +266,27 @@
                 </div>
 
                 <div class="add-plan-card">
-                    <h3>?? 添加新计划</h3>
+                    <h3>📝✨ 添加新计划</h3>
                     <div class="add-plan-form">
                         <input type="text" id="planInput" placeholder="写下我们要一起做的事..." maxlength="50">
-                        <button id="addPlanBtn" class="add-btn">? 添加</button>
+                        <button id="addPlanBtn" class="add-btn">➕ 添加</button>
                     </div>
                 </div>
             </section>
 
             <!-- ===== 恋爱日记 ===== -->
             <section id="page-diary" class="page">
-                <h2 class="page-title">? 恋爱日记</h2>
-                <p class="page-desc">记录我们的点点滴滴 ?</p>
+                <h2 class="page-title">📔 恋爱日记</h2>
+                <p class="page-desc">记录我们的点点滴滴 ✍️</p>
 
                 <div class="diary-form-card">
-                    <h3>?? 写日记</h3>
+                    <h3>✏️💕 写日记</h3>
                     <div class="diary-form">
                         <input type="text" id="diaryTitle" placeholder="今天是什么日子？" maxlength="40">
                         <textarea id="diaryContent" placeholder="写下你想对她说的话..." rows="4"></textarea>
                         <div class="diary-form-footer">
                             <input type="date" id="diaryDate">
-                            <button id="addDiaryBtn" class="add-btn">? 保存日记</button>
+                            <button id="addDiaryBtn" class="add-btn">💾 保存日记</button>
                         </div>
                     </div>
                 </div>
@@ -181,17 +298,17 @@
 
             <!-- ===== 食谱日记 ===== -->
             <section id="page-recipe" class="page">
-                <h2 class="page-title">? 食谱日记</h2>
-                <p class="page-desc">为你做的好吃的 ?</p>
+                <h2 class="page-title">🍳 食谱日记</h2>
+                <p class="page-desc">为你做的好吃的 😋</p>
 
                 <div class="recipe-form-card">
-                    <h3>? 记录新食谱</h3>
+                    <h3>🍽️ 记录新食谱</h3>
                     <div class="recipe-form">
                         <input type="text" id="recipeName" placeholder="菜名是什么？" maxlength="30">
                         <textarea id="recipeDesc" placeholder="描述一下这道菜..." rows="3"></textarea>
                         <div class="recipe-form-footer">
                             <input type="date" id="recipeDate">
-                            <button id="addRecipeBtn" class="add-btn">? 记录</button>
+                            <button id="addRecipeBtn" class="add-btn">📝 记录</button>
                         </div>
                     </div>
                 </div>
@@ -203,13 +320,13 @@
 
             <!-- ===== 照片墙 ===== -->
             <section id="page-photos" class="page">
-                <h2 class="page-title">? 我们的照片墙</h2>
-                <p class="page-desc">每一张都是美好回忆 ?</p>
+                <h2 class="page-title">📸 我们的照片墙</h2>
+                <p class="page-desc">每一张都是美好回忆 💕</p>
 
                 <div class="photos-upload-card">
-                    <h3>? 上传照片</h3>
+                    <h3>📤 上传照片</h3>
                     <div class="upload-area" id="uploadArea">
-                        <span class="upload-icon">?</span>
+                        <span class="upload-icon">📁</span>
                         <p>点击选择照片或拖拽到此处</p>
                         <input type="file" id="photoInput" accept="image/*" multiple hidden>
                     </div>
@@ -222,25 +339,27 @@
         </div>
 
         <!-- 底部 -->
-        <footer class="site-footer">
-            <p>? 希宝 & 小李 的秘密花园 ?</p>
-            <p class="footer-sub">从2021年6月26日开始，一直走下去 ?</p>
-            <div class="footer-emoji">? ? ? ? ?</div>
+        <footer class="site-footer">            <div class="footer-icons">
+                <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="footer-icon">
+                <span>💕</span>
+                <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="footer-icon">
+            </div>            <p>� 希宝 & 小李 🐻 的秘密花园</p>
+            <p class="footer-sub">从2021年6月26日开始，一直走下去 🐾</p>
+            <div class="footer-emoji">🐶 💕 🌸 🐾 🌺 💕 🐻</div>
         </footer>
     </div>
 
     <!-- 音乐播放器 -->
-    <div id="musicPlayer" class="music-player" style="display:none;">
-        <audio id="bgMusic" loop>
-            <source id="musicSource" src="" type="audio/mpeg">
+    <div id="musicPlayer" class="music-player">
+        <audio id="bgMusic" loop preload="auto">
+            <source src="https://music.163.com/song/media/outer/url?id=1466649056.mp3" type="audio/mpeg">
         </audio>
         <div class="music-controls" id="musicControls">
-            <input type="file" id="musicFileInput" accept="audio/*" hidden>
-            <button id="musicUploadBtn" class="music-upload-btn" title="上传音乐">&#128279;</button>
-            <span id="musicStatus" class="music-status">没有音乐</span>
+            <span class="music-songname">🎵 狂恋你 - 沈以诚</span>
+            <span id="musicStatus" class="music-status">点击音符播放</span>
         </div>
         <button id="musicToggle" class="music-toggle" title="播放/暂停音乐">
-            <span id="musicIcon">&#127925;</span>
+            <span id="musicIcon">🎵</span>
         </button>
     </div>
 
