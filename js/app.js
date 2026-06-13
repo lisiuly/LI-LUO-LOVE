@@ -1,5 +1,5 @@
 ﻿// ============================================
-//  ? 希宝 & 小李 - 秘密花园 ?
+//  � 希宝 & 小李 🐻 - 秘密花园 🐾
 // ============================================
 
 // ---- 配置 ----
@@ -15,14 +15,14 @@ const CONFIG = {
 // ---- 数据存储 ----
 const defaultData = {
     plans: [
-        { id: 1, text: '一起去看海 ?', done: false },
-        { id: 2, text: '一起吃遍所有美食 ?', done: false },
-        { id: 3, text: '一起去看樱花 ?', done: false },
-        { id: 4, text: '一起坐摩天轮 ?', done: false },
-        { id: 5, text: '一起养一只猫 ?', done: false },
-        { id: 6, text: '一起旅行去日本 ??', done: false },
-        { id: 7, text: '一起看日出 ?', done: false },
-        { id: 8, text: '一起看流星雨 ?', done: false },
+        { id: 1, text: '一起去看海 🌊', done: false },
+        { id: 2, text: '一起吃遍所有美食 🍽️', done: false },
+        { id: 3, text: '一起去看樱花 🌸', done: false },
+        { id: 4, text: '一起坐摩天轮 🎡', done: false },
+        { id: 5, text: '一起养一只猫 🐱', done: false },
+        { id: 6, text: '一起旅行去日本 🇯🇵✈️', done: false },
+        { id: 7, text: '一起看日出 🌅', done: false },
+        { id: 8, text: '一起看流星雨 🌠', done: false },
     ],
     diaries: [],
     recipes: [],
@@ -58,7 +58,7 @@ let appData = loadData();
 // ============================================
 function createPetals() {
     const container = document.getElementById('petalsContainer');
-    const petals = ['?', '?', '?', '?', '?', '?', '?', '?'];
+    const petals = ['🌸', '🌸', '🌺', '🌷', '🌹', '🌸', '🌼', '🌺'];
     for (let i = 0; i < 25; i++) {
         const petal = document.createElement('div');
         petal.className = 'petal';
@@ -156,12 +156,31 @@ function formatDate(dateStr) {
 //  主页计时器
 // ============================================
 function updateCounters() {
-    const days = calcDaysSince(CONFIG.START_DATE);
-    const dur = calcDuration(CONFIG.START_DATE);
+    const start = new Date(CONFIG.START_DATE);
+    const now = new Date();
+    const diff = now - start;
 
-    document.getElementById('daysTogether').textContent = days;
+    // Calculate total time
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    document.getElementById('timerDays').textContent = days;
+    document.getElementById('timerHours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('timerMinutes').textContent = String(minutes).padStart(2, '0');
+    document.getElementById('timerSeconds').textContent = String(seconds).padStart(2, '0');
+
+    // Update login page counter too
+    const loginDaysEl = document.getElementById('loginDaysDisplay');
+    const loginTimeEl = document.getElementById('loginTimeDisplay');
+    if (loginDaysEl) loginDaysEl.textContent = days + ' 天';
+    if (loginTimeEl) loginTimeEl.textContent = hours + '时 ' + minutes + '分 ' + seconds + '秒';
+
+    const dur = calcDuration(CONFIG.START_DATE);
     document.getElementById('togetherDetail').textContent =
-        `${dur.years}年 ${dur.months}个月 ${dur.days}天`;
+        `${dur.years}年${dur.months}个月${dur.days}天 ❤️  forever`;
 
     const bdayDays = calcBirthdayCountdown();
     document.getElementById('birthdayCountdown').textContent = bdayDays;
@@ -181,21 +200,21 @@ function updateCounters() {
 //  情话切换
 // ============================================
 const loveQuotes = [
-    '你的笑容是我一天的动力 ?',
-    '遇见你是我最美好的意外 ?',
-    '想和你一起，走过春夏秋冬 ?????',
-    '你是我的小呀小苹果 ?',
-    '余生有你，请多指教 ?',
-    '你的眼里有星星 ?',
-    '世界那么大，我只想要你 ?',
-    '每天想你一百遍 ?',
-    '你是我写过最美的情书 ?',
-    '在一起的日子，每天都甜 ?',
-    '希宝是世界上最好的女朋友 ?',
-    '小李永远爱希宝 ??',
-    '想牵着你的手，一直走下去 ?',
-    '你是我最想留住的幸运 ?',
-    '只要有你在，每天都是情人节 ?'
+    '你的笑容是我一天的动力 😊',
+    '遇见你是我最美好的意外 💕',
+    '想和你一起，走过春夏秋冬 🌸☀️🍂❄️❤️',
+    '你是我的小呀小苹果 🍎',
+    '余生有你，请多指教 💕',
+    '你的眼里有星星 ⭐',
+    '世界那么大，我只想要你 💕',
+    '每天想你一百遍 💭',
+    '你是我写过最美的情书 💌',
+    '在一起的日子，每天都甜 🍯',
+    '希宝是世界上最好的女朋友 💕',
+    '小李永远爱希宝 💕💕',
+    '想牵着你的手，一直走下去 🚶',
+    '你是我最想留住的幸运 🍀',
+    '只要有你在，每天都是情人节 💝'
 ];
 let currentQuoteIndex = 0;
 
@@ -224,9 +243,9 @@ function renderPlans() {
         const div = document.createElement('div');
         div.className = `plan-item ${plan.done ? 'done' : ''}`;
         div.innerHTML = `
-            <div class="plan-checkbox" data-id="${plan.id}">${plan.done ? '?' : ''}</div>
+            <div class="plan-checkbox" data-id="${plan.id}">${plan.done ? '✓' : ''}</div>
             <span class="plan-text">${plan.text}</span>
-            <button class="plan-delete" data-id="${plan.id}">?</button>
+            <button class="plan-delete" data-id="${plan.id}">🗑️</button>
         `;
         grid.appendChild(div);
     });
@@ -296,8 +315,8 @@ function renderDiaries() {
     if (appData.diaries.length === 0) {
         list.innerHTML = `
             <div class="empty-state">
-                <span class="empty-state-icon">?</span>
-                <span class="empty-state-text">还没有日记，写下第一段回忆吧 ??</span>
+                <span class="empty-state-icon">📝</span>
+                <span class="empty-state-text">还没有日记，写下第一段回忆吧 💕😊</span>
             </div>
         `;
         return;
@@ -310,11 +329,11 @@ function renderDiaries() {
         div.className = 'diary-entry';
         div.innerHTML = `
             <div class="diary-entry-header">
-                <span class="diary-entry-title">? ${diary.title}</span>
-                <span class="diary-entry-date">? ${diary.date}</span>
+                <span class="diary-entry-title">💕 ${diary.title}</span>
+                <span class="diary-entry-date">📅 ${diary.date}</span>
             </div>
             <div class="diary-entry-content">${diary.content}</div>
-            <button class="diary-entry-delete" data-id="${diary.id}">?</button>
+            <button class="diary-entry-delete" data-id="${diary.id}">🗑️</button>
         `;
         list.appendChild(div);
     });
@@ -339,7 +358,7 @@ function initDiaries() {
         const date = document.getElementById('diaryDate').value || formatDate(new Date().toISOString().slice(0, 10));
 
         if (!title || !content) {
-            alert('请填写标题和内容哦 ?');
+            alert('请填写标题和内容哦 💕');
             return;
         }
 
@@ -364,14 +383,14 @@ function renderRecipes() {
     if (appData.recipes.length === 0) {
         grid.innerHTML = `
             <div class="empty-state" style="grid-column:1/-1;">
-                <span class="empty-state-icon">?</span>
-                <span class="empty-state-text">还没有记录食谱，做了好吃的记下来吧 ?</span>
+                <span class="empty-state-icon">🍳</span>
+                <span class="empty-state-text">还没有记录食谱，做了好吃的记下来吧 😋</span>
             </div>
         `;
         return;
     }
 
-    const foodIcons = ['?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?'];
+    const foodIcons = ['🍚', '🍜', '🍝', '🍛', '🍣', '🥟', '🍲', '🥗', '🍕', '🥘', '🍰', '🍨'];
     const sorted = [...appData.recipes].reverse();
     sorted.forEach(recipe => {
         const icon = foodIcons[recipe.id % foodIcons.length];
@@ -381,8 +400,8 @@ function renderRecipes() {
             <div class="recipe-entry-icon">${icon}</div>
             <div class="recipe-entry-title">${recipe.name}</div>
             <div class="recipe-entry-desc">${recipe.desc}</div>
-            <div class="recipe-entry-date">? ${recipe.date}</div>
-            <button class="recipe-entry-delete" data-id="${recipe.id}">?</button>
+            <div class="recipe-entry-date">📅 ${recipe.date}</div>
+            <button class="recipe-entry-delete" data-id="${recipe.id}">🗑️</button>
         `;
         grid.appendChild(div);
     });
@@ -407,12 +426,12 @@ function initRecipes() {
         const date = document.getElementById('recipeDate').value || formatDate(new Date().toISOString().slice(0, 10));
 
         if (!name) {
-            alert('请输入菜名哦 ?');
+            alert('请输入菜名哦 😋');
             return;
         }
 
         const maxId = appData.recipes.length > 0 ? Math.max(...appData.recipes.map(r => r.id)) : 0;
-        appData.recipes.push({ id: maxId + 1, name, desc: desc || '超好吃！?', date });
+        appData.recipes.push({ id: maxId + 1, name, desc: desc || '超好吃！😋', date });
         saveData(appData);
         renderRecipes();
 
@@ -434,10 +453,10 @@ function renderPhotos() {
     if (photos.length === 0) {
         // Show placeholder photos
         const placeholders = [
-            { emoji: '?', text: '你们的照片' },
-            { emoji: '?', text: '美好回忆' },
-            { emoji: '?', text: '甜蜜瞬间' },
-            { emoji: '?', text: '生日快乐' },
+            { emoji: '💑', text: '你们的照片' },
+            { emoji: '💕', text: '美好回忆' },
+            { emoji: '😊', text: '甜蜜瞬间' },
+            { emoji: '🎂', text: '生日快乐' },
         ];
         placeholders.forEach((p, i) => {
             const div = document.createElement('div');
@@ -458,7 +477,7 @@ function renderPhotos() {
         div.className = 'photo-item';
         div.innerHTML = `
             <img src="${photo.data}" alt="photo ${index + 1}">
-            <button class="photo-delete-btn" data-index="${index}">?</button>
+            <button class="photo-delete-btn" data-index="${index}">🗑️</button>
         `;
         div.addEventListener('click', (e) => {
             if (!e.target.closest('.photo-delete-btn')) {
@@ -587,90 +606,85 @@ function initNavigation() {
 // ============================================
 //  音乐播放器
 // ============================================
+// ============================================
+//  音乐播放器（网易云直链）
+// ============================================
 function initMusicPlayer() {
-    const player = document.getElementById('musicPlayer');
     const audio = document.getElementById('bgMusic');
     const toggle = document.getElementById('musicToggle');
     const icon = document.getElementById('musicIcon');
     const status = document.getElementById('musicStatus');
-    const fileInput = document.getElementById('musicFileInput');
-    const uploadBtn = document.getElementById('musicUploadBtn');
-
-    // Check if there's saved music
-    const savedMusic = localStorage.getItem('loveSiteMusic');
-    if (savedMusic) {
-        audio.src = savedMusic;
-        status.textContent = '本地音乐';
-        player.style.display = 'flex';
-    } else {
-        player.style.display = 'flex';
-    }
-
-    // Toggle play/pause
+    
+    // 默认显示
+    status.textContent = '狂恋你 ♪';
+    
+    // 音频就绪
+    audio.addEventListener('canplay', () => {
+        status.textContent = '狂恋你 - 沈以诚 ♪';
+    });
+    
+    audio.addEventListener('error', () => {
+        status.textContent = '加载失败，换个网络试试';
+    });
+    
+    // 点击按钮播放/暂停
     toggle.addEventListener('click', () => {
-        if (!audio.src) {
-            fileInput.click();
-            return;
-        }
-
         if (audio.paused) {
             audio.play().then(() => {
                 toggle.classList.add('playing');
-                icon.textContent = '\u{1F3B5}';
-            }).catch(() => {
-                // Auto play blocked, user needs to interact
-                status.textContent = '点击播放';
+                icon.textContent = '🎵';
+                status.textContent = '狂恋你 - 沈以诚 ♪';
+            }).catch(err => {
+                // 浏览器阻止自动播放，提示用户点击
+                status.textContent = '点击音符播放';
+                console.log('播放被阻止，请点击音符');
             });
         } else {
             audio.pause();
             toggle.classList.remove('playing');
-            icon.textContent = '\u{1F3B5}';
+            icon.textContent = '🎵';
+            status.textContent = '狂恋你 ♪';
         }
     });
-
-    // Update icon when playing
+    
+    // 正在播放
     audio.addEventListener('play', () => {
         toggle.classList.add('playing');
-        icon.textContent = '\u{1F3B5}';
-        status.textContent = audio.src ? (savedMusic ? '本地音乐' : '播放中') : '没有音乐';
     });
-
+    
     audio.addEventListener('pause', () => {
         toggle.classList.remove('playing');
-        icon.textContent = '\u{1F3B5}';
     });
+}
 
-    audio.addEventListener('ended', () => {
-        toggle.classList.remove('playing');
-        icon.textContent = '\u{1F3B5}';
+// ============================================
+//  🎂 生日视频
+// ============================================
+function initBirthdayVideo() {
+    const videoSection = document.getElementById('birthdayVideoSection');
+    const video = document.getElementById('birthdayVideo');
+    
+    // 检查视频文件是否就绪（不再有 .crdownload 后缀）
+    video.addEventListener('loadedmetadata', () => {
+        videoSection.classList.add('visible');
     });
-
-    // Upload music
-    uploadBtn.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', () => {
-        const file = fileInput.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            audio.src = e.target.result;
-            localStorage.setItem('loveSiteMusic', e.target.result);
-            status.textContent = file.name.replace(/\.[^/.]+$/, '');
-            toggle.classList.add('playing');
-            icon.textContent = '&#127925;';
-            audio.play().catch(() => {});
-        };
-        reader.readAsDataURL(file);
-        fileInput.value = '';
+    
+    video.addEventListener('error', () => {
+        // 视频加载失败，隐藏区域
+        videoSection.style.display = 'none';
     });
-
-    // Try to load a demo song from a free API if no music is loaded
-    if (!savedMusic) {
-        // Use a free, publicly available music track
-        const demoMusic = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-        // Don't auto-load, let user choose
-        status.textContent = '点击音符上传音乐';
+    
+    // 如果视频在生日3天内，自动显示
+    const today = new Date();
+    const birthday = new Date(today.getFullYear(), 5, 16); // 6月16日
+    const diffDays = Math.ceil((birthday - today) / (1000 * 60 * 60 * 24));
+    if (diffDays >= -1 && diffDays <= 7) {
+        // 生日周内，尝试显示
+        setTimeout(() => {
+            if (video.readyState >= 1) {
+                videoSection.classList.add('visible');
+            }
+        }, 2000);
     }
 }
 
@@ -679,8 +693,8 @@ function initMusicPlayer() {
 // ============================================
 function initMainSite() {
     updateCounters();
-    // Update counters every minute
-    setInterval(updateCounters, 60000);
+    // Update counters every second (real-time count-up)
+    setInterval(updateCounters, 1000);
 
     // Init all modules
     initNavigation();
@@ -689,6 +703,10 @@ function initMainSite() {
     initRecipes();
     initPhotos();
     initMusicPlayer();
+    initWeather();
+    displayFortune();
+    displayTask();
+    initBirthdayVideo();
 
     // Set initial quote
     const quoteEl = document.querySelector('.quote-text');
@@ -699,10 +717,294 @@ function initMainSite() {
 }
 
 // ============================================
-//  ? 启动！
+//  🐶🐻 启动！
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = 'hidden';
     createPetals();
     initLogin();
 });
+
+// ============================================
+//  🌤️ 天气功能
+// ============================================
+const WEATHER_API = 'https://wttr.in';
+
+function fetchWeather(city) {
+    const content = document.getElementById('weatherContent');
+    content.innerHTML = '<div class="weather-loading">🌤️ 获取天气中...</div>';
+
+    // 使用 wttr.in JSON API 获取结构化数据
+    fetch(`https://wttr.in/${encodeURIComponent(city)}?format=j1&lang=zh`)
+        .then(res => res.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const tempC = current.temp_C + '°C';
+            
+            // 获取中文描述
+            let descCN = current.weatherDesc[0].value || '';
+            // wttr.in 有时在 lang_zh 字段提供中文
+            if (current.lang_zh && current.lang_zh.length > 0) {
+                descCN = current.lang_zh[0].value;
+            }
+            // 如果还是英文，尝试翻译
+            const displayDesc = translateWeatherDesc(descCN);
+            const weatherEmoji = getWeatherEmoji(displayDesc || descCN);
+            
+            content.innerHTML = `
+                <div class="weather-info">
+                    <div class="weather-emoji">${weatherEmoji}</div>
+                    <div class="weather-details">
+                        <div class="weather-temp">${tempC}</div>
+                        <div class="weather-desc">${displayDesc || descCN}</div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(() => {
+            // 备用：简单格式
+            fetch(`https://wttr.in/${encodeURIComponent(city)}?format=%C+%t&lang=zh`)
+                .then(res => res.text())
+                .then(data => {
+                    const clean = data.trim();
+                    // 尝试英文映射
+                    const mapped = translateWeatherDesc(clean);
+                    const weatherEmoji = getWeatherEmoji(mapped);
+                    content.innerHTML = `
+                        <div class="weather-info">
+                            <div class="weather-emoji">${weatherEmoji}</div>
+                            <div class="weather-details">
+                                <div class="weather-temp">${clean}</div>
+                                <div class="weather-desc">${mapped}</div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(() => {
+                    content.innerHTML = '<div style="text-align:center;padding:10px;color:rgba(255,255,255,0.5);font-size:13px;">😅 获取天气失败</div>';
+                });
+        });
+}
+
+function translateWeatherDesc(text) {
+    const map = {
+        'Sunny': '晴', 'Clear': '晴',
+        'Partly cloudy': '多云', 'Cloudy': '阴', 'Overcast': '阴天',
+        'Mist': '薄雾', 'Fog': '雾', 'Haze': '霾',
+        'Light drizzle': '毛毛雨', 'Patchy light drizzle': '局部小雨',
+        'Light rain': '小雨', 'Patchy light rain': '局部阵雨',
+        'Moderate rain at times': '间歇中雨', 'Moderate rain': '中雨',
+        'Heavy rain at times': '间歇大雨', 'Heavy rain': '大雨',
+        'Light rain shower': '小阵雨', 'Moderate or heavy rain shower': '大阵雨',
+        'Torrential rain shower': '暴雨',
+        'Thundery outbreaks possible': '可能雷暴', 'Patchy light rain with thunder': '雷阵雨',
+        'Moderate or heavy rain with thunder': '强雷雨',
+        'Light snow': '小雪', 'Moderate snow': '中雪', 'Heavy snow': '大雪',
+        'Blizzard': '暴风雪', 'Blowing snow': '风雪',
+        'Light sleet': '小冰粒', 'Moderate or heavy sleet': '雨夹雪',
+        'Freezing fog': '冻雾', 'Ice pellets': '冰粒',
+    };
+    
+    for (const [en, cn] of Object.entries(map)) {
+        if (text.toLowerCase().includes(en.toLowerCase())) return cn + ' ' + text;
+    }
+    return text;
+}
+
+function displayWeather(desc, temp, city) {
+    const content = document.getElementById('weatherContent');
+    const weatherEmoji = getWeatherEmoji(desc);
+
+    content.innerHTML = `
+        <div class="weather-info">
+            <div class="weather-emoji">${weatherEmoji}</div>
+            <div class="weather-details">
+                <div class="weather-temp">${temp}</div>
+                <div class="weather-desc">${desc}</div>
+            </div>
+        </div>
+    `;
+}
+
+function getWeatherEmoji(desc) {
+    if (desc.includes('晴') || desc.includes('Sunny') || desc.includes('Clear')) return '☀️';
+    if (desc.includes('云') || desc.includes('Cloud') || desc.includes('Overcast')) return '☁️';
+    if (desc.includes('雨') || desc.includes('Rain') || desc.includes('Drizzle') || desc.includes('Shower')) return '🌧️';
+    if (desc.includes('雪') || desc.includes('Snow') || desc.includes('Sleet')) return '❄️';
+    if (desc.includes('雾') || desc.includes('Fog') || desc.includes('Mist') || desc.includes('Haze')) return '🌫️';
+    if (desc.includes('雷') || desc.includes('Thunder') || desc.includes('Storm')) return '⛈️';
+    if (desc.includes('风') || desc.includes('Wind')) return '💨';
+    if (desc.includes('阴')) return '☁️';
+    return '🌈';
+}
+
+function initWeather() {
+    const savedCity = localStorage.getItem('loveSiteCity') || '深圳';
+    document.getElementById('cityInput').value = savedCity;
+    fetchWeather(savedCity);
+
+    document.getElementById('cityBtn').addEventListener('click', () => {
+        const city = document.getElementById('cityInput').value.trim();
+        if (city) {
+            localStorage.setItem('loveSiteCity', city);
+            fetchWeather(city);
+        }
+    });
+
+    document.getElementById('cityInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('cityBtn').click();
+    });
+}
+
+// ============================================
+//  🔮 今日运势
+// ============================================
+const fortuneList = [
+    // ===== 大吉 =====
+    { level: '大吉', text: '今日爱情运势极佳！适合表白、约会、求婚，大胆表达你的爱吧 💕' },
+    { level: '大吉', text: '天作之合！今天你们的心有灵犀指数爆表，一个眼神就能懂对方 👀' },
+    { level: '大吉', text: '超级幸运日！适合一起做一件从未做过的事，创造新的回忆 ✨' },
+    { level: '大吉', text: '爱情满满的一天！给对方准备一个小惊喜，TA会感动到哭 🎁' },
+    { level: '大吉', text: '今日份甜蜜超标！适合一起看日出日落，浪漫值拉满 🌅' },
+    { level: '大吉', text: '今天适合一起去看星星，感受宇宙的浪漫 🌟' },
+    { level: '大吉', text: '今天你们的默契度满分！一起做什么都顺利，享受甜蜜时光吧 🎯' },
+    { level: '大吉', text: '桃花运爆棚！但你的眼里只有TA，这才是最浪漫的事 🌸' },
+    { level: '大吉', text: '适合制造惊喜的一天！TA会因为你的小心意开心一整天 🎈' },
+    { level: '大吉', text: '今日爱情能量满格！一起拍照记录美好瞬间吧 📸' },
+    // ===== 中吉 =====
+    { level: '中吉', text: '运势不错！一起做饭会有意想不到的乐趣 🍳' },
+    { level: '中吉', text: '今天适合散步聊天，分享彼此的心事 🚶' },
+    { level: '中吉', text: '给对方写一封情书吧，文字最能打动人心 💌' },
+    { level: '中吉', text: '一起看一部电影，享受温馨的二人世界 🎬' },
+    { level: '中吉', text: '小幸运正在靠近，注意今天的小惊喜 🍀' },
+    { level: '中吉', text: '今天适合一起听音乐，放松心情 🎵' },
+    { level: '中吉', text: '给对方一个拥抱，胜过千言万语 🤗' },
+    { level: '中吉', text: '一起回忆初次见面的情景，会很有趣哦 💭' },
+    { level: '中吉', text: '一起喝杯咖啡聊聊天，平淡中也有甜蜜 ☕' },
+    { level: '中吉', text: '今天适合一起运动，健康又有爱 🏃' },
+    // ===== 小吉 =====
+    { level: '小吉', text: '平平淡淡也是真，珍惜在一起的每一刻 ☺️' },
+    { level: '小吉', text: '偶尔的小争吵也是感情的调味剂，别太在意 🌶️' },
+    { level: '小吉', text: '今天适合一起静静看书或追剧 📖' },
+    { level: '小吉', text: '给对方做一顿早餐，温暖从清晨开始 🌅' },
+    { level: '小吉', text: '一起整理房间也是一件浪漫的小事 🏠' },
+    { level: '小吉', text: '今天的小确幸：一起逛超市采购 🛒' },
+    { level: '小吉', text: '适合一起打游戏，开心最重要 🎮' },
+    { level: '小吉', text: '和TA一起养一盆植物，见证你们的爱情成长 🌱' },
+    { level: '小吉', text: '今天适合给对方按摩放松，贴心满分 💆' },
+    { level: '小吉', text: '一起计划下一次旅行，期待也是幸福的一部分 🗺️' },
+];
+
+function getDailyFortune() {
+    const today = new Date().toISOString().slice(0, 10);
+    const saved = localStorage.getItem('loveSiteFortune');
+    let fortuneIndex;
+
+    if (saved) {
+        try {
+            const savedData = JSON.parse(saved);
+            if (savedData.date === today) {
+                fortuneIndex = savedData.index;
+            } else {
+                fortuneIndex = Math.floor(Math.random() * fortuneList.length);
+                localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: fortuneIndex }));
+            }
+        } catch {
+            fortuneIndex = Math.floor(Math.random() * fortuneList.length);
+            localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: fortuneIndex }));
+        }
+    } else {
+        fortuneIndex = Math.floor(Math.random() * fortuneList.length);
+        localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: fortuneIndex }));
+    }
+
+    return fortuneList[fortuneIndex];
+}
+
+function displayFortune() {
+    const content = document.getElementById('fortuneContent');
+    const fortune = getDailyFortune();
+    content.innerHTML = `
+        <div class="fortune-result">
+            <div class="fortune-level">${fortune.level}</div>
+            <div class="fortune-text">${fortune.text}</div>
+        </div>
+    `;
+}
+
+function refreshFortune() {
+    const today = new Date().toISOString().slice(0, 10);
+    const newIndex = Math.floor(Math.random() * fortuneList.length);
+    localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: newIndex }));
+    displayFortune();
+}
+
+// ============================================
+//  ✅ 今日恋爱任务
+// ============================================
+const loveTasks = [
+    { icon: '💬', text: '互相说10个对方的优点' },
+    { icon: '🤗', text: '给对方一个持续30秒的拥抱' },
+    { icon: '💋', text: '给对方一个早安吻和晚安吻' },
+    { icon: '📝', text: '一起写下未来一年的目标' },
+    { icon: '📸', text: '拍一张合照留作纪念' },
+    { icon: '🍳', text: '一起做一顿浪漫的晚餐' },
+    { icon: '🎵', text: '分享一首最近最喜欢的歌' },
+    { icon: '📖', text: '给对方读一段有趣的故事' },
+    { icon: '🚶', text: '一起散步15分钟，不玩手机' },
+    { icon: '💌', text: '给对方写一封情书' },
+    { icon: '🎬', text: '一起看一部爱情电影' },
+    { icon: '☕', text: '一起喝杯咖啡，聊聊天' },
+    { icon: '🎮', text: '一起玩一局游戏' },
+    { icon: '🌸', text: '给对方买一束花' },
+    { icon: '🎁', text: '准备一个小惊喜给对方' },
+    { icon: '📞', text: '给远方的TA打个电话说想你' },
+    { icon: '🎂', text: '一起做甜点' },
+    { icon: '🎨', text: '一起画一幅画' },
+    { icon: '🧩', text: '一起完成一个拼图' },
+    { icon: '🌅', text: '一起看日出或日落' },
+];
+
+function getDailyTask() {
+    const today = new Date().toISOString().slice(0, 10);
+    const saved = localStorage.getItem('loveSiteTask');
+    let taskIndex;
+
+    if (saved) {
+        try {
+            const savedData = JSON.parse(saved);
+            if (savedData.date === today) {
+                taskIndex = savedData.index;
+            } else {
+                taskIndex = Math.floor(Math.random() * loveTasks.length);
+                localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: taskIndex }));
+            }
+        } catch {
+            taskIndex = Math.floor(Math.random() * loveTasks.length);
+            localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: taskIndex }));
+        }
+    } else {
+        taskIndex = Math.floor(Math.random() * loveTasks.length);
+        localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: taskIndex }));
+    }
+
+    return loveTasks[taskIndex];
+}
+
+function displayTask() {
+    const content = document.getElementById('taskContent');
+    const task = getDailyTask();
+    content.innerHTML = `
+        <div class="task-result">
+            <div class="task-icon">${task.icon}</div>
+            <div class="task-text">${task.text}</div>
+        </div>
+    `;
+}
+
+function refreshTask() {
+    const today = new Date().toISOString().slice(0, 10);
+    const newIndex = Math.floor(Math.random() * loveTasks.length);
+    localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: newIndex }));
+    displayTask();
+}
