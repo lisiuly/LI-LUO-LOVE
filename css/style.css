@@ -792,41 +792,6 @@ body::after {
     50% { transform: translateY(-5px); }
 }
 
-/* ===== 生日视频 ===== */
-.birthday-video-section {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    border: 2px solid rgba(245, 183, 168, 0.3);
-    text-align: center;
-    display: none;
-}
-
-.birthday-video-section.visible {
-    display: block;
-}
-
-.video-hint {
-    font-size: 16px;
-    color: var(--brown);
-    margin-bottom: 12px;
-    font-weight: bold;
-}
-
-.birthday-video {
-    width: 100%;
-    max-width: 500px;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow);
-    outline: none;
-}
-
-.birthday-video::-webkit-media-controls-panel {
-    background: linear-gradient(0deg, rgba(255,248,240,0.95), rgba(255,255,255,0.9));
-}
-
 /* ===== Counters ===== */
 .counters-grid {
     display: grid;

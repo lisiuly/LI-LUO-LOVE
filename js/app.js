@@ -658,37 +658,6 @@ function initMusicPlayer() {
 }
 
 // ============================================
-//  🎂 生日视频
-// ============================================
-function initBirthdayVideo() {
-    const videoSection = document.getElementById('birthdayVideoSection');
-    const video = document.getElementById('birthdayVideo');
-    
-    // 检查视频文件是否就绪（不再有 .crdownload 后缀）
-    video.addEventListener('loadedmetadata', () => {
-        videoSection.classList.add('visible');
-    });
-    
-    video.addEventListener('error', () => {
-        // 视频加载失败，隐藏区域
-        videoSection.style.display = 'none';
-    });
-    
-    // 如果视频在生日3天内，自动显示
-    const today = new Date();
-    const birthday = new Date(today.getFullYear(), 5, 16); // 6月16日
-    const diffDays = Math.ceil((birthday - today) / (1000 * 60 * 60 * 24));
-    if (diffDays >= -1 && diffDays <= 7) {
-        // 生日周内，尝试显示
-        setTimeout(() => {
-            if (video.readyState >= 1) {
-                videoSection.classList.add('visible');
-            }
-        }, 2000);
-    }
-}
-
-// ============================================
 //  初始化主站
 // ============================================
 function initMainSite() {
@@ -706,7 +675,6 @@ function initMainSite() {
     initWeather();
     displayFortune();
     displayTask();
-    initBirthdayVideo();
 
     // Set initial quote
     const quoteEl = document.querySelector('.quote-text');
