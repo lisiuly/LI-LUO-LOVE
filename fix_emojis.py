@@ -55,7 +55,7 @@ def fix_html(text):
         '<span class="deco-heart">?</span>': '<span class="deco-heart">?</span>',
         '<span class="deco-star">?</span>': '<span class="deco-star">?</span>',
         '<span class="avatar-emoji">?</span>': '<span class="avatar-emoji">?</span>',
-        '<p class="login-subtitle">? 我们的秘密花园 ?</p>': '<p class="login-subtitle">? 我们的秘密花园 ?</p>',
+        '<p class="login-subtitle">? 半糖小栈 ?</p>': '<p class="login-subtitle">? 半糖小栈 ?</p>',
         '<span class="password-icon">?</span>': '<span class="password-icon">?</span>',
         '<button id="loginBtn" class="login-btn">? 解锁 ?</button>': '<button id="loginBtn" class="login-btn">? 解锁 ?</button>',
         '<p id="loginError" class="login-error">? 密码不对哦，再试试～</p>': '<p id="loginError" class="login-error">? 密码不对哦，再试试～</p>',
