@@ -9,6 +9,7 @@ const CONFIG = {
     BOY_NAME: '小李',
     START_DATE: '2021-06-26',
     GIRL_BIRTHDAY: { month: 6, day: 16 },
+    BOY_BIRTHDAY: { month: 11, day: 30 },
     STORAGE_KEY: 'loveSiteData'
 };
 
@@ -827,84 +828,205 @@ function initWeather() {
 // ============================================
 //  🔮 今日运势
 // ============================================
-const fortuneList = [
-    // ===== 大吉 =====
-    { level: '大吉', text: '今日爱情运势极佳！适合表白、约会、求婚，大胆表达你的爱吧 💕' },
-    { level: '大吉', text: '天作之合！今天你们的心有灵犀指数爆表，一个眼神就能懂对方 👀' },
-    { level: '大吉', text: '超级幸运日！适合一起做一件从未做过的事，创造新的回忆 ✨' },
-    { level: '大吉', text: '爱情满满的一天！给对方准备一个小惊喜，TA会感动到哭 🎁' },
-    { level: '大吉', text: '今日份甜蜜超标！适合一起看日出日落，浪漫值拉满 🌅' },
-    { level: '大吉', text: '今天适合一起去看星星，感受宇宙的浪漫 🌟' },
-    { level: '大吉', text: '今天你们的默契度满分！一起做什么都顺利，享受甜蜜时光吧 🎯' },
-    { level: '大吉', text: '桃花运爆棚！但你的眼里只有TA，这才是最浪漫的事 🌸' },
-    { level: '大吉', text: '适合制造惊喜的一天！TA会因为你的小心意开心一整天 🎈' },
-    { level: '大吉', text: '今日爱情能量满格！一起拍照记录美好瞬间吧 📸' },
-    // ===== 中吉 =====
-    { level: '中吉', text: '运势不错！一起做饭会有意想不到的乐趣 🍳' },
-    { level: '中吉', text: '今天适合散步聊天，分享彼此的心事 🚶' },
-    { level: '中吉', text: '给对方写一封情书吧，文字最能打动人心 💌' },
-    { level: '中吉', text: '一起看一部电影，享受温馨的二人世界 🎬' },
-    { level: '中吉', text: '小幸运正在靠近，注意今天的小惊喜 🍀' },
-    { level: '中吉', text: '今天适合一起听音乐，放松心情 🎵' },
-    { level: '中吉', text: '给对方一个拥抱，胜过千言万语 🤗' },
-    { level: '中吉', text: '一起回忆初次见面的情景，会很有趣哦 💭' },
-    { level: '中吉', text: '一起喝杯咖啡聊聊天，平淡中也有甜蜜 ☕' },
-    { level: '中吉', text: '今天适合一起运动，健康又有爱 🏃' },
-    // ===== 小吉 =====
-    { level: '小吉', text: '平平淡淡也是真，珍惜在一起的每一刻 ☺️' },
-    { level: '小吉', text: '偶尔的小争吵也是感情的调味剂，别太在意 🌶️' },
-    { level: '小吉', text: '今天适合一起静静看书或追剧 📖' },
-    { level: '小吉', text: '给对方做一顿早餐，温暖从清晨开始 🌅' },
-    { level: '小吉', text: '一起整理房间也是一件浪漫的小事 🏠' },
-    { level: '小吉', text: '今天的小确幸：一起逛超市采购 🛒' },
-    { level: '小吉', text: '适合一起打游戏，开心最重要 🎮' },
-    { level: '小吉', text: '和TA一起养一盆植物，见证你们的爱情成长 🌱' },
-    { level: '小吉', text: '今天适合给对方按摩放松，贴心满分 💆' },
-    { level: '小吉', text: '一起计划下一次旅行，期待也是幸福的一部分 🗺️' },
+const HOROSCOPE_API = 'https://api.vvhan.com/api/horoscope';
+const FORTUNE_CACHE_KEY = 'loveSiteCoupleFortuneV2';
+
+const zodiacSigns = [
+    { name: '摩羯座', type: 'capricorn', start: 1222, end: 119 },
+    { name: '水瓶座', type: 'aquarius', start: 120, end: 218 },
+    { name: '双鱼座', type: 'pisces', start: 219, end: 320 },
+    { name: '白羊座', type: 'aries', start: 321, end: 419 },
+    { name: '金牛座', type: 'taurus', start: 420, end: 520 },
+    { name: '双子座', type: 'gemini', start: 521, end: 621 },
+    { name: '巨蟹座', type: 'cancer', start: 622, end: 722 },
+    { name: '狮子座', type: 'leo', start: 723, end: 822 },
+    { name: '处女座', type: 'virgo', start: 823, end: 922 },
+    { name: '天秤座', type: 'libra', start: 923, end: 1023 },
+    { name: '天蝎座', type: 'scorpio', start: 1024, end: 1122 },
+    { name: '射手座', type: 'sagittarius', start: 1123, end: 1221 }
 ];
 
-function getDailyFortune() {
-    const today = new Date().toISOString().slice(0, 10);
-    const saved = localStorage.getItem('loveSiteFortune');
-    let fortuneIndex;
-
-    if (saved) {
-        try {
-            const savedData = JSON.parse(saved);
-            if (savedData.date === today) {
-                fortuneIndex = savedData.index;
-            } else {
-                fortuneIndex = Math.floor(Math.random() * fortuneList.length);
-                localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: fortuneIndex }));
-            }
-        } catch {
-            fortuneIndex = Math.floor(Math.random() * fortuneList.length);
-            localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: fortuneIndex }));
-        }
-    } else {
-        fortuneIndex = Math.floor(Math.random() * fortuneList.length);
-        localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: fortuneIndex }));
-    }
-
-    return fortuneList[fortuneIndex];
+function getZodiacSign(birthday) {
+    const value = birthday.month * 100 + birthday.day;
+    return zodiacSigns.find(sign => {
+        if (sign.start > sign.end) return value >= sign.start || value <= sign.end;
+        return value >= sign.start && value <= sign.end;
+    });
 }
 
-function displayFortune() {
+function getLocalDateKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+function getCoupleSigns() {
+    return [
+        { name: CONFIG.BOY_NAME, birthday: CONFIG.BOY_BIRTHDAY, sign: getZodiacSign(CONFIG.BOY_BIRTHDAY) },
+        { name: CONFIG.GIRL_NAME, birthday: CONFIG.GIRL_BIRTHDAY, sign: getZodiacSign(CONFIG.GIRL_BIRTHDAY) }
+    ];
+}
+
+function normalizeScore(value, fallback = 3) {
+    const score = Number(value);
+    if (!Number.isFinite(score)) return fallback;
+    return Math.min(5, Math.max(1, Math.round(score)));
+}
+
+async function fetchSignFortune(person) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    try {
+        const url = `${HOROSCOPE_API}?type=${encodeURIComponent(person.sign.type)}&time=today`;
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error(`Horoscope HTTP ${response.status}`);
+
+        const payload = await response.json();
+        if (!payload.success || !payload.data) throw new Error('Invalid horoscope response');
+
+        const data = payload.data;
+        return {
+            name: person.name,
+            sign: person.sign.name,
+            birthday: `${person.birthday.month}.${person.birthday.day}`,
+            loveScore: normalizeScore(data.fortune?.love),
+            overallScore: normalizeScore(data.fortune?.all),
+            loveText: data.fortunetext?.love || data.shortcomment || '适合多听听彼此今天真正的想法。',
+            luckyColor: data.luckycolor || '',
+            luckyNumber: data.luckynumber || ''
+        };
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+function createLocalSignFortune(person, dayNumber) {
+    const signOffset = person.sign.type === 'gemini' ? 2 : 4;
+    const loveScore = 2 + ((dayNumber + signOffset) % 4);
+    const messages = person.sign.type === 'gemini'
+        ? [
+            '今天思路活跃，也更在意回应。把好奇心用在了解对方上，会比猜测更靠近彼此。',
+            '表达欲比平时更强，适合把心里话说具体；一句明确的关心胜过反复试探。',
+            '容易被新鲜事吸引，和对方分享一个刚发现的小事，会自然打开今天的话题。',
+            '信息很多、节奏偏快，重要的话慢一点说，也给对方完整回应的时间。'
+        ]
+        : [
+            '今天行动力不错，适合主动提出一个两个人都期待的小安排。',
+            '坦率是你的优势，但重要感受先确认再下结论，沟通会更顺。',
+            '想尝试新鲜事的心变强，邀请对方一起参与，比独自决定更有默契。',
+            '需要一点自由和舒展，也别忘了告诉对方你的去向与真实想法。'
+        ];
+
+    return {
+        name: person.name,
+        sign: person.sign.name,
+        birthday: `${person.birthday.month}.${person.birthday.day}`,
+        loveScore,
+        overallScore: loveScore,
+        loveText: messages[(dayNumber + signOffset) % messages.length],
+        luckyColor: '',
+        luckyNumber: ''
+    };
+}
+
+function getLocalCoupleFortune() {
+    const startOfYear = new Date(new Date().getFullYear(), 0, 0);
+    const dayNumber = Math.floor((new Date() - startOfYear) / 86400000);
+    return getCoupleSigns().map(person => createLocalSignFortune(person, dayNumber));
+}
+
+function getCoupleAdvice(score) {
+    if (score >= 85) return '双子与射手都是重视交流和新鲜感的星座。今天适合一起尝试一件新事，也把喜欢直接说出来。';
+    if (score >= 65) return '今天的关键词是“说清楚”。射手少一点想当然，双子少一点绕弯，默契会在坦率回应里升温。';
+    return '今天先照顾情绪，再讨论道理。给彼此一点空间，晚些时候用一个具体问题重新开始对话。';
+}
+
+function saveFortuneCache(people) {
+    try {
+        localStorage.setItem(FORTUNE_CACHE_KEY, JSON.stringify({
+            date: getLocalDateKey(),
+            people
+        }));
+    } catch (error) {
+        console.warn('Save horoscope cache error:', error);
+    }
+}
+
+function loadFortuneCache() {
+    try {
+        const cached = JSON.parse(localStorage.getItem(FORTUNE_CACHE_KEY));
+        if (cached?.date === getLocalDateKey() && Array.isArray(cached.people)) return cached.people;
+    } catch (error) {
+        console.warn('Load horoscope cache error:', error);
+    }
+    return null;
+}
+
+function appendFortuneText(parent, className, text) {
+    const element = document.createElement('div');
+    element.className = className;
+    element.textContent = text;
+    parent.appendChild(element);
+    return element;
+}
+
+function renderCoupleFortune(people, source) {
     const content = document.getElementById('fortuneContent');
-    const fortune = getDailyFortune();
-    content.innerHTML = `
-        <div class="fortune-result">
-            <div class="fortune-level">${fortune.level}</div>
-            <div class="fortune-text">${fortune.text}</div>
-        </div>
-    `;
+    const loveIndex = Math.round(people.reduce((total, person) => total + person.loveScore, 0) / people.length * 20);
+    const result = document.createElement('div');
+    result.className = 'fortune-result';
+
+    const heading = appendFortuneText(result, 'fortune-level', `爱情指数 ${loveIndex}`);
+    const max = document.createElement('span');
+    max.textContent = '/100';
+    heading.appendChild(max);
+
+    appendFortuneText(result, 'fortune-pair', '射手座 × 双子座');
+
+    const peopleContainer = document.createElement('div');
+    peopleContainer.className = 'fortune-people';
+    people.forEach(person => {
+        const item = document.createElement('div');
+        item.className = 'fortune-person';
+        appendFortuneText(item, 'fortune-person-name', `${person.name} · ${person.sign} (${person.birthday})`);
+        appendFortuneText(item, 'fortune-stars', `${'★'.repeat(person.loveScore)}${'☆'.repeat(5 - person.loveScore)}`);
+        appendFortuneText(item, 'fortune-person-text', person.loveText);
+        peopleContainer.appendChild(item);
+    });
+    result.appendChild(peopleContainer);
+
+    appendFortuneText(result, 'fortune-advice', getCoupleAdvice(loveIndex));
+    appendFortuneText(result, 'fortune-source', source);
+    content.replaceChildren(result);
+}
+
+async function displayFortune(forceRefresh = false) {
+    const content = document.getElementById('fortuneContent');
+    const refreshButton = document.querySelector('.fortune-refresh');
+    const cached = forceRefresh ? null : loadFortuneCache();
+
+    if (cached) {
+        renderCoupleFortune(cached, '数据来源：今日星座日运 · 已缓存');
+        return;
+    }
+
+    content.innerHTML = '<div class="fortune-loading">正在读取双子座与射手座日运...</div>';
+    if (refreshButton) refreshButton.disabled = true;
+
+    try {
+        const people = await Promise.all(getCoupleSigns().map(fetchSignFortune));
+        saveFortuneCache(people);
+        renderCoupleFortune(people, '数据来源：公开星座日运 · 今日实时');
+    } catch (error) {
+        console.warn('Live horoscope unavailable:', error);
+        renderCoupleFortune(getLocalCoupleFortune(), '实时日运暂不可用 · 当前为本地星座参考');
+    } finally {
+        if (refreshButton) refreshButton.disabled = false;
+    }
 }
 
 function refreshFortune() {
-    const today = new Date().toISOString().slice(0, 10);
-    const newIndex = Math.floor(Math.random() * fortuneList.length);
-    localStorage.setItem('loveSiteFortune', JSON.stringify({ date: today, index: newIndex }));
-    displayFortune();
+    displayFortune(true);
 }
 
 // ============================================
