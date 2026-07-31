@@ -542,6 +542,9 @@ body::after {
     gap: 8px;
     font-size: 20px;
     font-weight: bold;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-width: max-content;
 }
 
 .brand-icon {
@@ -560,6 +563,7 @@ body::after {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    white-space: nowrap;
 }
 
 .nav-links {
@@ -2198,4 +2202,65 @@ body::after {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 10px;
     }
+}
+
+/* ===== 2026 可爱恋爱风与线条小狗角色 ===== */
+.character-avatar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/icons/线条小狗 13 icon图标 256x256_爱给网_aigei_com.png');
+    background-repeat: no-repeat;
+    background-size: 210% auto;
+    border-radius: inherit;
+}
+
+.character-avatar.xiaojimao { background-position: 4% 62%; }
+.character-avatar.xiaobai { background-position: 96% 18%; }
+.brand-icon-img { flex: 0 0 30px; border-radius: 50%; overflow: hidden; }
+.hero-char-img { overflow: hidden; background-color: rgba(255,255,255,.72); }
+.profile-name { border-bottom: 0; }
+.hero-subtitle:empty { display: none; }
+
+.login-page {
+    background: linear-gradient(145deg, #fff8fb 0%, #ffe9f1 48%, #fff3dd 100%);
+}
+
+.login-page::before {
+    background: url('../images/backgroundplate/【哲风壁纸】卡通-可爱小狗.png') center/cover no-repeat;
+    opacity: .1;
+    filter: saturate(.7);
+}
+
+.bg-circle.c1 { background: radial-gradient(circle, #ff9fbd, transparent); }
+.bg-circle.c2 { background: radial-gradient(circle, #ffd17d, transparent); }
+.bg-circle.c3 { background: radial-gradient(circle, #ffb6c9, transparent); }
+
+.unlock-card {
+    background: rgba(255,255,255,.82);
+    border: 1px solid rgba(255,151,181,.32);
+    box-shadow: 0 18px 50px rgba(197,92,125,.15);
+}
+
+.unlock-title, .unlock-sub, .counter-label, .counter-big, .counter-sub, .profile-name {
+    color: #764b5b;
+}
+
+.unlock-input { background: #fff9fb; border-color: #ffc4d5; color: #603d49; }
+.unlock-btn { background: linear-gradient(135deg, #ff8fb1, #f6aa75); }
+.daily-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.counters-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 768px) {
+    .login-page { position: fixed; min-height: 100svh; overflow-y: auto; }
+    .login-container { min-height: 100svh; gap: 16px; padding: 24px 16px 40px; }
+    .intro-profiles { gap: 16px; }
+    .profile-avatar { width: 74px; height: 74px; background: rgba(255,255,255,.8); }
+    .unlock-card { width: min(100%, 340px); padding: 24px 20px; }
+    .daily-grid, .counters-grid { grid-template-columns: 1fr; }
+    .home-hero { padding: 24px 14px; }
+    .timer-display { gap: 4px; justify-content: center; }
+    .music-player { right: 14px; bottom: 14px; }
+    .music-controls { display: flex; max-width: calc(100vw - 78px); }
+    .music-songname { max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
 }

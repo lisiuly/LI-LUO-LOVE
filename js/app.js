@@ -135,9 +135,8 @@ function calcDuration(dateStr) {
     return { years, months, days };
 }
 
-function calcBirthdayCountdown() {
+function calcBirthdayCountdown(bday = CONFIG.GIRL_BIRTHDAY) {
     const now = new Date();
-    const bday = CONFIG.GIRL_BIRTHDAY;
     let target = new Date(now.getFullYear(), bday.month - 1, bday.day);
 
     if (now > target) {
@@ -168,10 +167,14 @@ function updateCounters() {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    document.getElementById('timerDays').textContent = days;
-    document.getElementById('timerHours').textContent = String(hours).padStart(2, '0');
-    document.getElementById('timerMinutes').textContent = String(minutes).padStart(2, '0');
-    document.getElementById('timerSeconds').textContent = String(seconds).padStart(2, '0');
+    const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
+    setText('timerDays', days);
+    setText('timerHours', String(hours).padStart(2, '0'));
+    setText('timerMinutes', String(minutes).padStart(2, '0'));
+    setText('timerSeconds', String(seconds).padStart(2, '0'));
 
     // Update login page counter too
     const loginDaysEl = document.getElementById('loginDaysDisplay');
@@ -180,21 +183,22 @@ function updateCounters() {
     if (loginTimeEl) loginTimeEl.textContent = hours + '时 ' + minutes + '分 ' + seconds + '秒';
 
     const dur = calcDuration(CONFIG.START_DATE);
-    document.getElementById('togetherDetail').textContent =
-        `${dur.years}年${dur.months}个月${dur.days}天 ❤️  forever`;
+    setText('togetherDetail', `${dur.years}年${dur.months}个月${dur.days}天 ❤️  forever`);
 
     const bdayDays = calcBirthdayCountdown();
-    document.getElementById('birthdayCountdown').textContent = bdayDays;
+    setText('birthdayCountdown', bdayDays);
+    const boyBirthdayEl = document.getElementById('boyBirthdayCountdown');
+    if (boyBirthdayEl) boyBirthdayEl.textContent = calcBirthdayCountdown(CONFIG.BOY_BIRTHDAY);
 
     // Update milestones
     const startDate = new Date(CONFIG.START_DATE);
     const ms100 = new Date(startDate);
     ms100.setDate(ms100.getDate() + 100);
-    document.getElementById('milestone100').textContent = formatDate(ms100.toISOString().slice(0, 10));
+    setText('milestone100', formatDate(ms100.toISOString().slice(0, 10)));
 
     const ms365 = new Date(startDate);
     ms365.setFullYear(ms365.getFullYear() + 1);
-    document.getElementById('milestone365').textContent = formatDate(ms365.toISOString().slice(0, 10));
+    setText('milestone365', formatDate(ms365.toISOString().slice(0, 10)));
 }
 
 // ============================================
@@ -627,6 +631,12 @@ function initMusicPlayer() {
     audio.addEventListener('error', () => {
         status.textContent = '加载失败，换个网络试试';
     });
+
+    const tryAutoplay = () => audio.play().catch(() => {
+        status.textContent = '轻触页面播放音乐 ♪';
+    });
+    tryAutoplay();
+    document.addEventListener('pointerdown', tryAutoplay, { once: true });
     
     // 点击按钮播放/暂停
     toggle.addEventListener('click', () => {
@@ -663,8 +673,6 @@ function initMusicPlayer() {
 // ============================================
 function initMainSite() {
     updateCounters();
-    // Update counters every second (real-time count-up)
-    setInterval(updateCounters, 1000);
 
     // Init all modules
     initNavigation();
@@ -675,7 +683,14 @@ function initMainSite() {
     initMusicPlayer();
     initWeather();
     displayFortune();
-    displayTask();
+    let fortuneDate = getLocalDateKey();
+    setInterval(() => {
+        const today = getLocalDateKey();
+        if (today !== fortuneDate) {
+            fortuneDate = today;
+            displayFortune(true);
+        }
+    }, 60000);
 
     // Set initial quote
     const quoteEl = document.querySelector('.quote-text');
@@ -692,6 +707,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = 'hidden';
     createPetals();
     initLogin();
+    updateCounters();
+    setInterval(updateCounters, 1000);
 });
 
 // ============================================
@@ -755,6 +772,23 @@ function fetchWeather(city) {
         });
 }
 
+async function fetchWeatherByCoords(latitude, longitude, city = '当前位置') {
+    const content = document.getElementById('weatherContent');
+    content.innerHTML = '<div class="weather-loading">🌤️ 获取天气中...</div>';
+    try {
+        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,apparent_temperature&timezone=auto`);
+        if (!response.ok) throw new Error('weather unavailable');
+        const current = (await response.json()).current;
+        const labels = {0:'晴朗',1:'基本晴朗',2:'局部多云',3:'阴天',45:'雾',48:'雾凇',51:'小毛毛雨',53:'毛毛雨',55:'大毛毛雨',61:'小雨',63:'中雨',65:'大雨',71:'小雪',73:'中雪',75:'大雪',80:'阵雨',81:'中阵雨',82:'强阵雨',95:'雷雨',96:'雷雨伴冰雹',99:'强雷雨伴冰雹'};
+        const desc = labels[current.weather_code] || '天气变化中';
+        document.getElementById('weatherLocation').dataset.location = city;
+        content.innerHTML = `<div class="weather-info"><div class="weather-emoji">${getWeatherEmoji(desc)}</div><div class="weather-details"><div class="weather-temp">${Math.round(current.temperature_2m)}°C</div><div class="weather-desc">${desc} · 体感 ${Math.round(current.apparent_temperature)}°C</div></div></div>`;
+    } catch {
+        if (city === '深圳' || city === '当前位置') fetchWeatherByCoords(22.5431, 114.0579, '深圳');
+        else fetchWeather(city);
+    }
+}
+
 function translateWeatherDesc(text) {
     const map = {
         'Sunny': '晴', 'Clear': '晴',
@@ -808,9 +842,37 @@ function getWeatherEmoji(desc) {
 }
 
 function initWeather() {
-    const savedCity = localStorage.getItem('loveSiteCity') || '深圳';
-    document.getElementById('cityInput').value = savedCity;
-    fetchWeather(savedCity);
+    const fallbackCity = localStorage.getItem('loveSiteCity') || '深圳';
+    const useCity = city => {
+        const finalCity = city || '深圳';
+        document.getElementById('cityInput').value = finalCity;
+        localStorage.setItem('loveSiteCity', finalCity);
+        fetchWeather(finalCity);
+    };
+
+    if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(async position => {
+            try {
+                const { latitude, longitude } = position.coords;
+                const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=zh`);
+                const data = await response.json();
+                const city = data.city || data.locality || data.principalSubdivision || fallbackCity;
+                document.getElementById('cityInput').value = city;
+                localStorage.setItem('loveSiteCity', city);
+                fetchWeatherByCoords(latitude, longitude, city);
+            } catch {
+                useCity(fallbackCity);
+            }
+        }, () => {
+            document.getElementById('cityInput').value = '深圳';
+            localStorage.setItem('loveSiteCity', '深圳');
+            fetchWeatherByCoords(22.5431, 114.0579, '深圳');
+        }, { timeout: 6000, maximumAge: 3600000 });
+    } else {
+        document.getElementById('cityInput').value = '深圳';
+        localStorage.setItem('loveSiteCity', '深圳');
+        fetchWeatherByCoords(22.5431, 114.0579, '深圳');
+    }
 
     document.getElementById('cityBtn').addEventListener('click', () => {
         const city = document.getElementById('cityInput').value.trim();
@@ -1027,74 +1089,4 @@ async function displayFortune(forceRefresh = false) {
 
 function refreshFortune() {
     displayFortune(true);
-}
-
-// ============================================
-//  ✅ 今日恋爱任务
-// ============================================
-const loveTasks = [
-    { icon: '💬', text: '互相说10个对方的优点' },
-    { icon: '🤗', text: '给对方一个持续30秒的拥抱' },
-    { icon: '💋', text: '给对方一个早安吻和晚安吻' },
-    { icon: '📝', text: '一起写下未来一年的目标' },
-    { icon: '📸', text: '拍一张合照留作纪念' },
-    { icon: '🍳', text: '一起做一顿浪漫的晚餐' },
-    { icon: '🎵', text: '分享一首最近最喜欢的歌' },
-    { icon: '📖', text: '给对方读一段有趣的故事' },
-    { icon: '🚶', text: '一起散步15分钟，不玩手机' },
-    { icon: '💌', text: '给对方写一封情书' },
-    { icon: '🎬', text: '一起看一部爱情电影' },
-    { icon: '☕', text: '一起喝杯咖啡，聊聊天' },
-    { icon: '🎮', text: '一起玩一局游戏' },
-    { icon: '🌸', text: '给对方买一束花' },
-    { icon: '🎁', text: '准备一个小惊喜给对方' },
-    { icon: '📞', text: '给远方的TA打个电话说想你' },
-    { icon: '🎂', text: '一起做甜点' },
-    { icon: '🎨', text: '一起画一幅画' },
-    { icon: '🧩', text: '一起完成一个拼图' },
-    { icon: '🌅', text: '一起看日出或日落' },
-];
-
-function getDailyTask() {
-    const today = new Date().toISOString().slice(0, 10);
-    const saved = localStorage.getItem('loveSiteTask');
-    let taskIndex;
-
-    if (saved) {
-        try {
-            const savedData = JSON.parse(saved);
-            if (savedData.date === today) {
-                taskIndex = savedData.index;
-            } else {
-                taskIndex = Math.floor(Math.random() * loveTasks.length);
-                localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: taskIndex }));
-            }
-        } catch {
-            taskIndex = Math.floor(Math.random() * loveTasks.length);
-            localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: taskIndex }));
-        }
-    } else {
-        taskIndex = Math.floor(Math.random() * loveTasks.length);
-        localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: taskIndex }));
-    }
-
-    return loveTasks[taskIndex];
-}
-
-function displayTask() {
-    const content = document.getElementById('taskContent');
-    const task = getDailyTask();
-    content.innerHTML = `
-        <div class="task-result">
-            <div class="task-icon">${task.icon}</div>
-            <div class="task-text">${task.text}</div>
-        </div>
-    `;
-}
-
-function refreshTask() {
-    const today = new Date().toISOString().slice(0, 10);
-    const newIndex = Math.floor(Math.random() * loveTasks.length);
-    localStorage.setItem('loveSiteTask', JSON.stringify({ date: today, index: newIndex }));
-    displayTask();
 }

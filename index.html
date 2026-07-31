@@ -25,20 +25,20 @@
             <!-- 左：简介区 -->
             <div class="login-intro">
                 <div class="intro-profiles">
-                    <div class="profile-item she">
+                    <div class="profile-item he">
                         <div class="profile-avatar">
-                            <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="希宝" class="profile-img">
+                            <span class="character-avatar xiaojimao" role="img" aria-label="小李"></span>
                         </div>
-                        <span class="profile-name">希宝</span>
+                        <span class="profile-name">小李</span>
                     </div>
                     <div class="profile-divider">
                         <span class="divider-heart">💕</span>
                     </div>
-                    <div class="profile-item he">
+                    <div class="profile-item she">
                         <div class="profile-avatar">
-                            <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="小李" class="profile-img">
+                            <span class="character-avatar xiaobai" role="img" aria-label="小希"></span>
                         </div>
-                        <span class="profile-name">小李</span>
+                        <span class="profile-name">小希</span>
                     </div>
                 </div>
                 <div class="intro-counter">
@@ -84,9 +84,9 @@
         <!-- 顶部导航 -->
         <nav class="top-nav">
             <div class="nav-brand">
-                <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="brand-icon-img">
+                <span class="character-avatar xiaojimao brand-icon-img" aria-hidden="true"></span>
                 <span class="brand-text">希宝 & 小李</span>
-                <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="brand-icon-img">
+                <span class="character-avatar xiaobai brand-icon-img" aria-hidden="true"></span>
             </div>
             <div class="nav-links" id="navLinks">
                 <a href="#" class="nav-item active" data-page="home">🏠 首页</a>
@@ -104,16 +104,15 @@
             <section id="page-home" class="page active">
                 <div class="home-hero">
                     <div class="hero-bg-decoration">
-                        <span>�</span><span>✨</span><span>☕</span><span>✨</span><span>🌸</span>
+                        <span>💕</span><span>✨</span><span>☕</span><span>✨</span><span>🌸</span>
                     </div>
                     <div class="hero-characters">
-                        <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="hero-char-img">
+                        <span class="character-avatar xiaobai hero-char-img" role="img" aria-label="小白"></span>
                         <span class="char-heart">💕</span>
-                        <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="hero-char-img">
+                        <span class="character-avatar xiaojimao hero-char-img" role="img" aria-label="小鸡毛"></span>
                     </div>
                     <div class="hero-title">
                         <h1>欢迎来到我们的世界</h1>
-                        <p class="hero-subtitle">希宝 🐶  &amp;  小李 🐻</p>
                     </div>
                     <div class="hero-paws">
                         <span>🐾</span><span>🐾</span><span>🐾</span>
@@ -121,9 +120,9 @@
                 </div>
                 <!-- 希宝生日倒计时条 -->
                 <div class="birthday-banner" id="birthdayBanner">
-                    <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="banner-icon">
-                    <span class="banner-text">🎂 希宝生日倒计时 🎂</span>
-                    <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="banner-icon">
+                    <span class="character-avatar xiaobai banner-icon" aria-hidden="true"></span>
+                    <span class="banner-text">🎂 我们的生日倒计时 🎂</span>
+                    <span class="character-avatar xiaojimao banner-icon" aria-hidden="true"></span>
                 </div>
                 <div class="counters-grid">
                     <div class="counter-card timer-card">
@@ -160,6 +159,13 @@
                         <div class="counter-value" id="birthdayCountdown">0</div>
                         <div class="counter-unit">天</div>
                         <div class="counter-detail">6月16日 🎉</div>
+                    </div>
+                    <div class="counter-card">
+                        <div class="counter-icon">🐣</div>
+                        <div class="counter-label">距离小李生日还有</div>
+                        <div class="counter-value" id="boyBirthdayCountdown">0</div>
+                        <div class="counter-unit">天</div>
+                        <div class="counter-detail">11月30日 🎉</div>
                     </div>
                 </div>
 
@@ -199,17 +205,6 @@
                         <button class="fortune-refresh" onclick="refreshFortune()">🔄 更新今日运势</button>
                     </div>
 
-                    <!-- 恋爱任务 -->
-                    <div class="daily-card task-card">
-                        <div class="daily-card-header">
-                            <img src="images/icons/256b0b3b08994bf7924d90abae57e78c.png" alt="❤️" class="daily-card-icon-img">
-                            <span class="daily-card-title">✅ 今日恋爱任务</span>
-                        </div>
-                        <div class="task-content" id="taskContent">
-                            <div class="task-loading">加载中...</div>
-                        </div>
-                        <button class="task-refresh" onclick="refreshTask()">🔄 换一个</button>
-                    </div>
                 </div>
 
                 <div class="milestone-section">
@@ -332,10 +327,10 @@
 
         <!-- 底部 -->
         <footer class="site-footer">            <div class="footer-icons">
-                <img src="images/icons/01def663b6f249968f2b31fef83c3a69.png" alt="🐶" class="footer-icon">
+                <span class="character-avatar xiaobai footer-icon" aria-hidden="true"></span>
                 <span>💕</span>
-                <img src="images/icons/062afa0a9e7e45b2b524e8d3c285ba08.png" alt="🐻" class="footer-icon">
-            </div>            <p>� 希宝 & 小李 🐻 的秘密花园</p>
+                <span class="character-avatar xiaojimao footer-icon" aria-hidden="true"></span>
+            </div><p>🐶 希宝 & 小李的秘密花园 🐶</p>
             <p class="footer-sub">从2021年6月26日开始，一直走下去 🐾</p>
             <div class="footer-emoji">🐶 💕 🌸 🐾 🌺 💕 🐻</div>
         </footer>
@@ -343,7 +338,7 @@
 
     <!-- 音乐播放器 -->
     <div id="musicPlayer" class="music-player">
-        <audio id="bgMusic" loop preload="auto">
+        <audio id="bgMusic" loop preload="auto" autoplay playsinline>
             <source src="https://music.163.com/song/media/outer/url?id=1466649056.mp3" type="audio/mpeg">
         </audio>
         <div class="music-controls" id="musicControls">

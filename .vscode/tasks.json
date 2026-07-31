@@ -1,0 +1,131 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Push to GitHub",
+			"type": "shell",
+			"command": "git push -u origin main",
+			"isBackground": false
+		},
+		{
+			"label": "Check Git Config",
+			"type": "shell",
+			"command": "git config user.email; git config user.name",
+			"isBackground": false
+		},
+		{
+			"label": "Check Git Config",
+			"type": "shell",
+			"command": "git config user.email; git config user.name",
+			"isBackground": false
+		},
+		{
+			"label": "Check Git Log",
+			"type": "shell",
+			"command": "git log --oneline; echo \"---\"; git log --format='%H %ae %an'",
+			"isBackground": false
+		},
+		{
+			"label": "Git Log",
+			"type": "shell",
+			"command": "git log --oneline --no-pager",
+			"isBackground": false
+		},
+		{
+			"label": "Git Log",
+			"type": "shell",
+			"command": "git --no-pager log --oneline --format='%h %ae %an'",
+			"isBackground": false
+		},
+		{
+			"label": "配置 Git 邮箱为 noreply",
+			"type": "shell",
+			"command": "git config user.email \"126389991+lisiuly@users.noreply.github.com\"; git config user.name \"lisiuly\"; git config user.email; git config user.name",
+			"isBackground": false
+		},
+		{
+			"label": "查看提交历史",
+			"type": "shell",
+			"command": "git --no-pager log --format='%h %ae %an'",
+			"isBackground": false
+		},
+		{
+			"label": "重写提交邮箱",
+			"type": "shell",
+			"command": "git filter-branch --env-filter 'if [ \"$GIT_AUTHOR_EMAIL\" = \"lisiuly@163.com\" ]; then export GIT_AUTHOR_EMAIL=\"126389991+lisiuly@users.noreply.github.com\"; fi; if [ \"$GIT_COMMITTER_EMAIL\" = \"lisiuly@163.com\" ]; then export GIT_COMMITTER_EMAIL=\"126389991+lisiuly@users.noreply.github.com\"; fi' -- --all",
+			"isBackground": false
+		},
+		{
+			"label": "检查所有引用",
+			"type": "shell",
+			"command": "git for-each-ref --format='%(refname) %(objectname)' 2>&1",
+			"isBackground": false
+		},
+		{
+			"label": "修复损坏的引用",
+			"type": "shell",
+			"command": "git update-ref -d refs/remotes/origin/main 2>$null; git for-each-ref --format='%(refname)'",
+			"isBackground": false
+		},
+		{
+			"label": "检查 refs 文件",
+			"type": "shell",
+			"command": "dir /s /b .git\\refs\\remotes\\origin 2>nul || Get-ChildItem .git\\refs\\remotes\\origin -Recurse",
+			"isBackground": false
+		},
+		{
+			"label": "删除损坏的引用文件",
+			"type": "shell",
+			"command": "Get-ChildItem .git\\refs\\remotes\\origin -Recurse; Remove-Item .git\\refs\\remotes\\origin -Recurse -Force 2>$null; git for-each-ref --format='%(refname)'",
+			"isBackground": false
+		},
+		{
+			"label": "清理损坏的远程引用",
+			"type": "shell",
+			"command": "Remove-Item .git\\refs\\remotes\\origin -Recurse -Force; git for-each-ref --format='%(refname)'",
+			"isBackground": false
+		},
+		{
+			"label": "检查 packed-refs",
+			"type": "shell",
+			"command": "Get-Content .git\\packed-refs 2>$null; Select-String -Path .git\\packed-refs -Pattern 'origin' 2>$null",
+			"isBackground": false
+		},
+		{
+			"label": "删除 packed-refs",
+			"type": "shell",
+			"command": "Remove-Item .git\\packed-refs -Force; git for-each-ref --format='%(refname)'",
+			"isBackground": false
+		},
+		{
+			"label": "重写提交邮箱",
+			"type": "shell",
+			"command": "set FILTER_BRANCH_SQUELCH_WARNING=1 & git filter-branch --env-filter \"if [ \\\"$GIT_AUTHOR_EMAIL\\\" = \\\"lisiuly@163.com\\\" ]; then export GIT_AUTHOR_EMAIL=\\\"126389991+lisiuly@users.noreply.github.com\\\"; fi; if [ \\\"$GIT_COMMITTER_EMAIL\\\" = \\\"lisiuly@163.com\\\" ]; then export GIT_COMMITTER_EMAIL=\\\"126389991+lisiuly@users.noreply.github.com\\\"; fi\" -- --all",
+			"isBackground": false
+		},
+		{
+			"label": "验证提交邮箱",
+			"type": "shell",
+			"command": "git --no-pager log --format='%h %ae %an'",
+			"isBackground": false
+		},
+		{
+			"label": "强制推送到 GitHub",
+			"type": "shell",
+			"command": "git push -u origin main --force",
+			"isBackground": false
+		},
+		{
+			"label": "配置 SSH 并推送",
+			"type": "shell",
+			"command": "git config --local core.sshCommand \"ssh -o StrictHostKeyChecking=accept-new\"; git push -u origin main --force",
+			"isBackground": false
+		},
+		{
+			"label": "清理临时文件",
+			"type": "shell",
+			"command": "Remove-Item answer_yes.txt -Force",
+			"isBackground": false
+		}
+	]
+}
