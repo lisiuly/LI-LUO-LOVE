@@ -1,7 +1,5 @@
-const ALLOWED_SIGNS = new Set([
-    'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo',
-    'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'
-]);
+const ALLOWED_SIGNS = new Set(['gemini', 'sagittarius']);
+const ALLOWED_QUERY_KEYS = new Set(['astro']);
 
 const ALLOWED_ORIGINS = new Set([
     'https://lovelx.top',
@@ -30,13 +28,15 @@ module.exports = async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(204).end();
     if (req.method !== 'GET') return res.status(405).json({ error: '仅支持 GET 请求' });
     if (origin && !ALLOWED_ORIGINS.has(origin)) return res.status(403).json({ error: '来源未被允许' });
+    if (Object.keys(req.query).some(key => !ALLOWED_QUERY_KEYS.has(key))) {
+        return res.status(400).json({ error: '请求参数无效' });
+    }
 
     const sign = String(req.query.astro || '').toLowerCase();
     if (!ALLOWED_SIGNS.has(sign)) return res.status(400).json({ error: '星座参数无效' });
     if (!process.env.TIANAPI_KEY) return res.status(503).json({ error: '星座服务尚未配置' });
 
     const params = new URLSearchParams({ key: process.env.TIANAPI_KEY, astro: sign });
-    if (req.query.date) params.set('date', String(req.query.date));
 
     try {
         const response = await fetch(`https://apis.tianapi.com/star/index?${params}`, {
