@@ -418,31 +418,137 @@ function initDiaries() {
 //  食谱日记
 // ============================================
 const featuredRecipes = [
-    { name: '可乐鸡翅', aliases: ['可乐鸡翅','鸡翅可乐'], image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=1000&q=85', summary: '甜咸入味、色泽油亮的家常硬菜。', ingredients: ['鸡翅中 8只（约500克）','可乐 330毫升','生抽 2汤匙','老抽 1茶匙（上色）','料酒 1汤匙','姜 5片','葱 2段','盐 1/3茶匙','食用油 1汤匙'], steps: ['鸡翅洗净，两面各划两刀；用料酒、2片姜腌 15 分钟。', '冷水下锅，加鸡翅和姜片，大火煮开后撇去浮沫，继续煮 2 分钟，捞出擦干。', '锅烧热放油，鸡翅皮面朝下，中火煎 3 到 4 分钟，翻面再煎 2 分钟，煎到两面金黄。', '加入葱段、剩余姜片、生抽、老抽和可乐；可乐液面到鸡翅一半即可。', '大火煮开后转中小火，加盖焖 15 分钟，中途翻面一次。', '开盖转大火收汁 3 到 5 分钟，汁变浓亮并能挂在鸡翅上即可；尝味后再决定是否加盐。'] },
-    { name: '番茄炒蛋', aliases: ['番茄炒蛋','西红柿炒鸡蛋'], image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=80', summary: '酸甜开胃，十分钟就能端上桌。', ingredients: ['番茄 2个','鸡蛋 3个','盐 1/2茶匙','白糖 1/2茶匙','食用油 2汤匙','葱花 少许'], steps: ['番茄切块，鸡蛋加 1 汤匙清水和少许盐打散。', '锅烧热放 1 汤匙油，倒入蛋液，炒到刚凝固就盛出，保持嫩度。', '补少许油，下番茄中火炒 2 到 3 分钟，炒出汁后加糖和盐。', '倒回鸡蛋，大火翻匀 30 秒，撒葱花出锅。'] },
-    { name: '蒜香虾仁意面', image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=900&q=80', summary: '适合两个人一起完成的晚餐。', steps: '意面煮熟备用。蒜末和虾仁炒香，加入黑胡椒与少量煮面水，拌入意面即可。' },
-    { name: '照烧鸡腿饭', image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=80', summary: '甜咸浓郁，配一碗热米饭。', steps: '鸡腿去骨煎至两面金黄，加入生抽、蜂蜜和清水，小火收汁后切块铺在米饭上。' },
-    { name: '牛油果鸡蛋吐司', image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=900&q=80', summary: '清爽的周末早餐。', steps: '吐司烤脆，牛油果压泥加盐和黑胡椒，铺上水煮蛋或煎蛋即可。' }
+    { id:'tomato-eggs', name:'西红柿炒鸡蛋', aliases:['番茄炒蛋'], category:'素菜', icon:'🍅', time:15, difficulty:'简单', servings:2, summary:'酸甜开胃，厨房新手也能稳定完成。', ingredients:['西红柿 2个（约400克）','鸡蛋 3个','盐 3克','白糖 3克','食用油 25毫升','葱花 少许'], steps:['西红柿切块；鸡蛋加一小撮盐和一汤匙清水，充分打散。','热锅放一半油，倒入蛋液，边缘凝固后快速推散，八成熟时盛出。','补剩余油，下西红柿和盐，中火炒到出汁，再加糖调节酸味。','倒回鸡蛋，大火翻匀约30秒，撒葱花出锅。'], tips:'鸡蛋不要炒到全熟再盛出，回锅后口感才嫩。' },
+    { id:'cola-wings', name:'可乐鸡翅', category:'荤菜', icon:'🍗', time:35, difficulty:'简单', servings:2, summary:'甜咸入味，适合两个人分享的下饭菜。', ingredients:['鸡翅中 8只','可乐 330毫升','生抽 30毫升','老抽 5毫升','料酒 15毫升','姜 5片','食用油 10毫升'], steps:['鸡翅两面划刀，用料酒和两片姜腌15分钟。','鸡翅冷水下锅，煮开后再煮2分钟，捞出擦干。','锅中放油，鸡翅两面煎至金黄。','加入姜片、生抽、老抽和可乐，大火煮开后转小火焖15分钟。','开盖转大火收汁，汤汁能挂在鸡翅上时关火。'], tips:'可乐本身有糖，收汁后再尝味，通常不必额外加糖。' },
+    { id:'braised-chicken', name:'黄焖鸡', category:'荤菜', icon:'🥘', time:45, difficulty:'中等', servings:2, summary:'鸡腿软嫩，汤汁浓郁，配米饭刚刚好。', ingredients:['鸡腿 2只','香菇 6朵','青椒 1个','土豆 1个','生抽 25毫升','蚝油 15毫升','冰糖 8克','姜 4片'], steps:['鸡腿剁块，香菇泡发，土豆和青椒切块。','锅中少油炒化冰糖，下鸡块炒至表面微黄。','加入姜、生抽和蚝油翻匀，再放香菇和没过鸡块一半的热水。','小火焖20分钟，加入土豆再焖12分钟。','放青椒，大火收汁2分钟即可。'], tips:'青椒最后再放，颜色和清香都会更好。' },
+    { id:'steamed-fish', name:'清蒸鲈鱼', category:'水产', icon:'🐟', time:25, difficulty:'中等', servings:2, summary:'鲜嫩清爽，最能吃出鱼本身的味道。', ingredients:['鲈鱼 1条（约600克）','姜 8片','葱 2根','蒸鱼豉油 25毫升','食用油 15毫升','料酒 10毫升'], steps:['鱼处理干净，在鱼身两侧各划两刀，用料酒和姜片腌10分钟。','水烧开后放鱼，大火蒸8分钟，关火焖2分钟。','倒掉盘中汤汁，去掉旧姜片，铺上新葱姜丝。','淋蒸鱼豉油，再浇上烧热的食用油。'], tips:'一定要等水开后再上锅，600克左右的鱼蒸8分钟即可。' },
+    { id:'fried-rice', name:'蛋炒饭', category:'主食', icon:'🍚', time:12, difficulty:'简单', servings:2, summary:'粒粒分明，用剩米饭快速解决一餐。', ingredients:['冷米饭 2碗','鸡蛋 2个','火腿 60克','胡萝卜 50克','葱花 适量','盐 3克','食用油 20毫升'], steps:['火腿和胡萝卜切小丁，鸡蛋打散。','热锅放油，鸡蛋炒散后盛出。','原锅下胡萝卜和火腿炒香，加入冷米饭压散。','大火翻炒至米粒松散，倒回鸡蛋，加盐和葱花炒匀。'], tips:'冷藏隔夜饭含水更少；没有隔夜饭时，可把热饭摊开晾凉。' },
+    { id:'scallion-noodles', name:'葱油拌面', category:'主食', icon:'🍜', time:20, difficulty:'简单', servings:2, summary:'葱香浓郁，简单却很满足。', ingredients:['细面条 200克','小葱 8根','生抽 30毫升','老抽 8毫升','白糖 8克','食用油 40毫升'], steps:['小葱擦干切段，生抽、老抽和白糖调匀。','冷油下葱段，小火慢炸到葱变焦黄，捞出葱段。','关小火倒入调味汁，搅拌到糖融化后关火。','面条煮熟沥干，每碗拌入两到三勺葱油汁，放上葱段。'], tips:'葱必须擦干再下油，避免飞溅；全程小火才不会发苦。' },
+    { id:'egg-soup', name:'紫菜蛋花汤', category:'汤粥', icon:'🥣', time:10, difficulty:'简单', servings:2, summary:'十分钟暖汤，适合搭配任何家常菜。', ingredients:['清水 700毫升','鸡蛋 2个','紫菜 5克','虾皮 8克','盐 3克','香油 5毫升','葱花 少许'], steps:['锅中加水和虾皮煮开，放入撕碎的紫菜。','鸡蛋充分打散，汤保持微沸时沿锅边细细淋入。','等待10秒再轻推蛋花，加盐、香油和葱花。'], tips:'蛋液下锅后不要马上搅，蛋花会更完整。' },
+    { id:'egg-sandwich', name:'鸡蛋三明治', category:'早餐', icon:'🥪', time:15, difficulty:'简单', servings:2, summary:'柔软香甜，适合一起吃的周末早餐。', ingredients:['吐司 4片','鸡蛋 3个','蛋黄酱 25克','牛奶 10毫升','盐 1克','黑胡椒 少许','生菜 2片'], steps:['鸡蛋冷水下锅，水开后煮9分钟，过冷水去壳。','蛋黄压碎，加入蛋黄酱、牛奶、盐和黑胡椒，再拌入切碎的蛋白。','吐司铺生菜和鸡蛋馅，盖上另一片吐司，轻压后对半切开。'], tips:'鸡蛋馅冷藏10分钟后更容易定型，也更清爽。' },
+    { id:'egg-tarts', name:'懒人蛋挞', category:'甜品', icon:'🧁', time:30, difficulty:'简单', servings:2, summary:'外酥里嫩，甜甜的下午茶。', ingredients:['冷冻蛋挞皮 6个','鸡蛋 1个','牛奶 100毫升','淡奶油 60毫升','细砂糖 25克'], steps:['烤箱提前以200℃预热。','鸡蛋、牛奶、淡奶油和糖搅匀，过筛一次。','蛋挞液倒入挞皮八分满。','放入烤箱中层，200℃烤20到23分钟，表面出现焦糖斑即可。'], tips:'蛋挞液过筛后口感更细腻；不同烤箱最后5分钟注意观察。' },
+    { id:'lemon-soda', name:'蜂蜜柠檬气泡水', category:'饮品', icon:'🍋', time:8, difficulty:'简单', servings:2, summary:'酸甜清爽，适合晚餐后的两人饮品。', ingredients:['柠檬 1个','蜂蜜 25克','无糖气泡水 500毫升','冰块 适量','薄荷叶 少许'], steps:['柠檬用盐搓洗表皮，一半切片，一半挤汁。','杯中加入蜂蜜和柠檬汁搅匀。','加入冰块和柠檬片，沿杯壁缓慢倒入气泡水，轻轻搅一下。'], tips:'气泡水最后加入并轻搅，气泡会保留得更久。' }
 ];
 
 function escapeHTML(value = '') {
     return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
 }
 
-function recipeCardHTML(recipe, action = true) {
-    const image = recipe.image || featuredRecipes[recipe.id % featuredRecipes.length].image;
-    const actionButton = action ? `<button class="recipe-save-found" data-name="${escapeHTML(recipe.name)}" data-desc="${escapeHTML(recipe.instructions || recipe.steps || recipe.summary || '')}" data-image="${escapeHTML(image)}">记入我的食谱</button>` : '';
-    const ingredients = recipe.ingredients || [];
-    const steps = Array.isArray(recipe.steps) ? recipe.steps : (recipe.instructions ? recipe.instructions.split(/\n+/).filter(Boolean) : []);
-    return `<article class="recipe-result-card"><img src="${escapeHTML(image)}" alt="${escapeHTML(recipe.name)}" loading="lazy"><div class="recipe-result-body"><h4>${escapeHTML(recipe.name)}</h4><p class="recipe-summary">${escapeHTML(recipe.summary || '一份值得和喜欢的人一起分享的料理。')}</p>${ingredients.length ? `<section class="recipe-detail-section"><strong>准备食材</strong><ul>${ingredients.map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul></section>` : ''}${steps.length ? `<details class="recipe-detail-section" open><summary>详细步骤</summary><ol>${steps.map(step => `<li>${escapeHTML(step)}</li>`).join('')}</ol></details>` : ''}${actionButton}</div></article>`;
+let recipeCatalog = featuredRecipes;
+const RECIPE_API_BASE = 'https://li-luo-love.vercel.app/api';
+
+async function fetchRecipeAPI(url, timeout = 10000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try { return await fetch(url, { signal:controller.signal }); }
+    finally { clearTimeout(timer); }
 }
 
-function renderDailyRecommendation() {
-    const target = document.getElementById('recipeRecommendation');
-    if (!target) return;
-    const day = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-    const recipe = featuredRecipes[day % featuredRecipes.length];
-    target.innerHTML = `<div class="recommendation-copy"><span class="recipe-kicker">TODAY'S PICK · ${getLocalDateKey()}</span><h3>今日推荐：${escapeHTML(recipe.name)}</h3><p>${escapeHTML(recipe.summary)}</p></div><img src="${recipe.image}" alt="今日推荐 ${escapeHTML(recipe.name)}" loading="lazy"><div class="recommendation-steps"><strong>快速做法</strong><span>${escapeHTML(recipe.steps)}</span></div>`;
+function recipeCardHTML(recipe) {
+    const localMeta = recipe.time ? `<span>${recipe.time} 分钟</span><span>${escapeHTML(recipe.difficulty)}</span>` : '<span>完整步骤</span>';
+    const summary = recipe.summary || '来自 HowToCook 的完整菜谱，点开查看食材、用量和制作步骤。';
+    return `<article class="recipe-result-card" data-category="${escapeHTML(recipe.category)}"><div class="recipe-card-icon" aria-hidden="true">${recipe.icon || '🍽️'}</div><div class="recipe-result-body"><div class="recipe-card-meta"><span>${escapeHTML(recipe.category)}</span>${localMeta}</div><h4>${escapeHTML(recipe.name)}</h4><p class="recipe-summary">${escapeHTML(summary)}</p><button type="button" class="recipe-view" data-recipe-id="${escapeHTML(recipe.id)}">查看完整做法</button></div></article>`;
+}
+
+function renderRecipeDetail(recipe) {
+    const panel = document.getElementById('recipeDetailPanel');
+    panel.hidden = false;
+    panel.innerHTML = `<div class="recipe-detail-heading"><div><span class="recipe-detail-icon" aria-hidden="true">${recipe.icon}</span><div><p>${escapeHTML(recipe.category)} · ${recipe.time} 分钟 · ${escapeHTML(recipe.difficulty)}</p><h3>${escapeHTML(recipe.name)}</h3></div></div><button class="recipe-detail-close" type="button" aria-label="关闭菜谱详情">关闭</button></div><p class="recipe-detail-summary">${escapeHTML(recipe.summary)}</p><div class="recipe-detail-columns"><section><h4>两人份食材</h4><ul>${recipe.ingredients.map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul></section><section><h4>步骤</h4><ol>${recipe.steps.map(step => `<li>${escapeHTML(step)}</li>`).join('')}</ol></section></div><aside class="recipe-tip"><strong>不翻车提示</strong><span>${escapeHTML(recipe.tips)}</span></aside><button class="recipe-save-found" data-name="${escapeHTML(recipe.name)}" data-desc="${escapeHTML(recipe.summary)}">记入我们的食谱日记</button>`;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function appendInlineMarkdown(parent, text, recipePath) {
+    const pattern = /(!?\[[^\]]*\]\([^)]+\)|`[^`]+`)/g;
+    let cursor = 0;
+    for (const match of text.matchAll(pattern)) {
+        parent.append(document.createTextNode(text.slice(cursor, match.index)));
+        const token = match[0];
+        const parts = token.match(/^(!?)\[([^\]]*)\]\(([^)]+)\)$/);
+        if (parts) {
+            const [, imageMark, label, href] = parts;
+            const resolvedUrl = new URL(href, `https://raw.githubusercontent.com/Anduin2017/HowToCook/master/${recipePath.substring(0, recipePath.lastIndexOf('/') + 1)}`);
+            if (!['http:', 'https:'].includes(resolvedUrl.protocol)) {
+                parent.append(document.createTextNode(label || href));
+                cursor = match.index + token.length;
+                continue;
+            }
+            const resolved = resolvedUrl.href;
+            if (imageMark) {
+                const img = document.createElement('img');
+                img.src = resolved;
+                img.alt = label || '菜谱步骤图片';
+                img.loading = 'lazy';
+                parent.append(img);
+            } else {
+                const link = document.createElement('a');
+                link.href = resolved;
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.textContent = label || href;
+                parent.append(link);
+            }
+        } else {
+            const code = document.createElement('code');
+            code.textContent = token.slice(1, -1);
+            parent.append(code);
+        }
+        cursor = match.index + token.length;
+    }
+    parent.append(document.createTextNode(text.slice(cursor)));
+}
+
+function markdownToFragment(markdown, recipePath) {
+    const fragment = document.createDocumentFragment();
+    let list = null;
+    markdown.replace(/\r/g, '').split('\n').forEach(rawLine => {
+        const line = rawLine.trimEnd();
+        if (!line.trim()) { list = null; return; }
+        const heading = line.match(/^(#{1,3})\s+(.+)$/);
+        const item = line.match(/^\s*(?:[-*+]|(\d+)\.)\s+(.+)$/);
+        if (heading) {
+            list = null;
+            const node = document.createElement(`h${Math.min(heading[1].length + 2, 5)}`);
+            appendInlineMarkdown(node, heading[2], recipePath);
+            fragment.append(node);
+        } else if (item) {
+            const tag = item[1] ? 'ol' : 'ul';
+            if (!list || list.tagName.toLowerCase() !== tag) {
+                list = document.createElement(tag);
+                fragment.append(list);
+            }
+            const node = document.createElement('li');
+            appendInlineMarkdown(node, item[2], recipePath);
+            list.append(node);
+        } else if (/^!\[[^\]]*\]\([^)]+\)$/.test(line.trim())) {
+            list = null;
+            const figure = document.createElement('figure');
+            appendInlineMarkdown(figure, line.trim(), recipePath);
+            fragment.append(figure);
+        } else {
+            list = null;
+            const node = document.createElement('p');
+            appendInlineMarkdown(node, line.replace(/^>\s?/, ''), recipePath);
+            fragment.append(node);
+        }
+    });
+    return fragment;
+}
+
+async function renderRemoteRecipeDetail(recipe) {
+    const panel = document.getElementById('recipeDetailPanel');
+    panel.hidden = false;
+    panel.innerHTML = `<div class="recipe-detail-loading" role="status">正在打开「${escapeHTML(recipe.name)}」的完整做法…</div>`;
+    panel.scrollIntoView({ behavior:'smooth', block:'start' });
+    try {
+        const response = await fetchRecipeAPI(`${RECIPE_API_BASE}/recipe?path=${encodeURIComponent(recipe.path)}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '菜谱加载失败');
+        panel.innerHTML = `<div class="recipe-detail-heading"><div><span class="recipe-detail-icon" aria-hidden="true">${recipe.icon || '🍽️'}</span><div><p>${escapeHTML(recipe.category)} · HowToCook</p><h3>${escapeHTML(recipe.name)}</h3></div></div><button class="recipe-detail-close" type="button" aria-label="关闭菜谱详情">关闭</button></div><div class="recipe-markdown"></div><div class="recipe-detail-actions"><button class="recipe-save-found" data-name="${escapeHTML(recipe.name)}" data-desc="来自 HowToCook 的完整菜谱">记入我们的食谱日记</button><a href="${escapeHTML(data.sourceUrl)}" target="_blank" rel="noopener">查看原始菜谱</a></div>`;
+        panel.querySelector('.recipe-markdown').append(markdownToFragment(data.markdown, recipe.path));
+    } catch (error) {
+        panel.innerHTML = `<div class="recipe-detail-error"><strong>这道菜暂时打不开</strong><p>${escapeHTML(error.message)}，可以稍后再试。</p><button type="button" class="recipe-retry">重新加载</button><button type="button" class="recipe-detail-close">关闭</button></div>`;
+        panel.querySelector('.recipe-retry').addEventListener('click', () => renderRemoteRecipeDetail(recipe), { once:true });
+    }
 }
 
 function renderRecipes() {
@@ -476,48 +582,68 @@ function renderRecipes() {
 
 function initRecipes() {
     renderRecipes();
-    renderDailyRecommendation();
     document.getElementById('recipeDate').value = getLocalDateKey();
 
     const searchInput = document.getElementById('recipeSearchInput');
     const searchButton = document.getElementById('recipeSearchBtn');
     const searchStatus = document.getElementById('recipeSearchStatus');
     const searchResults = document.getElementById('recipeSearchResults');
-    const searchRecipes = async () => {
-        const query = searchInput.value.trim();
-        if (!query) { searchStatus.textContent = '先输入一道菜名，例如“番茄炒蛋”'; return; }
-        searchStatus.textContent = '正在找做法……';
-        searchResults.innerHTML = '';
-        const normalizedQuery = query.toLowerCase().replace(/[\s·炒]/g, '');
-        const local = featuredRecipes.filter(recipe => [recipe.name, ...(recipe.aliases || [])].some(alias => normalizedQuery.includes(alias.toLowerCase().replace(/[\s·炒]/g, '')) || alias.toLowerCase().replace(/[\s·炒]/g, '').includes(normalizedQuery)));
-        if (local.length) {
-            searchStatus.textContent = `已找到 ${local.length} 道中文家常菜做法`;
-            searchResults.innerHTML = local.map(recipe => recipeCardHTML(recipe)).join('');
+    const loadMore = document.getElementById('recipeLoadMore');
+    const categoryNav = document.getElementById('recipeCategories');
+    let activeCategory = '全部';
+    let visibleLimit = 24;
+    let currentMatches = [];
+
+    const renderCategories = () => {
+        const categories = ['全部', ...new Set(recipeCatalog.map(recipe => recipe.category))];
+        categoryNav.innerHTML = categories.map(category => `<button type="button" class="recipe-category${category === activeCategory ? ' active' : ''}" data-category="${escapeHTML(category)}">${escapeHTML(category)}</button>`).join('');
+    };
+
+    const searchRecipes = () => {
+        const query = searchInput.value.trim().toLowerCase();
+        currentMatches = recipeCatalog.filter(recipe => {
+            const inCategory = activeCategory === '全部' || recipe.category === activeCategory;
+            const haystack = [recipe.name, recipe.category, recipe.summary || '', ...(recipe.aliases || []), ...(recipe.ingredients || [])].join(' ').toLowerCase();
+            return inCategory && (!query || haystack.includes(query));
+        });
+        searchStatus.textContent = query || activeCategory !== '全部' ? `找到 ${currentMatches.length} 道菜谱` : `共 ${recipeCatalog.length} 道完整菜谱`;
+        searchResults.innerHTML = currentMatches.length ? currentMatches.slice(0, visibleLimit).map(recipe => recipeCardHTML(recipe)).join('') : `<div class="recipe-empty-result">没有找到相关菜谱，换个菜名或分类试试。</div>`;
+        loadMore.hidden = currentMatches.length <= visibleLimit;
+        if (!loadMore.hidden) loadMore.textContent = `再加载 ${Math.min(24, currentMatches.length - visibleLimit)} 道`;
+    };
+
+    renderCategories();
+    searchRecipes();
+    const resetAndSearch = () => { visibleLimit = 24; searchRecipes(); };
+    searchButton.addEventListener('click', resetAndSearch);
+    searchInput.addEventListener('keydown', event => { if (event.key === 'Enter') resetAndSearch(); });
+    searchInput.addEventListener('input', resetAndSearch);
+    loadMore.addEventListener('click', () => { visibleLimit += 24; searchRecipes(); });
+    categoryNav.addEventListener('click', event => {
+        const button = event.target.closest('.recipe-category');
+        if (!button) return;
+        activeCategory = button.dataset.category;
+        visibleLimit = 24;
+        categoryNav.querySelectorAll('.recipe-category').forEach(item => item.classList.toggle('active', item === button));
+        searchRecipes();
+    });
+    searchResults.addEventListener('click', event => {
+        const viewButton = event.target.closest('.recipe-view');
+        if (!viewButton) return;
+        const recipe = recipeCatalog.find(item => item.id === viewButton.dataset.recipeId);
+        if (recipe) recipe.path ? renderRemoteRecipeDetail(recipe) : renderRecipeDetail(recipe);
+    });
+
+    const detailPanel = document.getElementById('recipeDetailPanel');
+    detailPanel.addEventListener('click', event => {
+        if (event.target.closest('.recipe-detail-close')) {
+            detailPanel.hidden = true;
             return;
         }
-        try {
-            const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(query)}`);
-            const data = await response.json();
-            const meals = (data.meals || []).slice(0, 6).map(meal => {
-                const ingredients = [];
-                for (let i = 1; i <= 20; i++) if (meal[`strIngredient${i}`]) ingredients.push(`${meal[`strMeasure${i}`] || ''}${meal[`strIngredient${i}`]}`);
-                return { name: meal.strMeal, image: meal.strMealThumb, summary: `${meal.strArea || '家常'}料理`, ingredients, instructions: meal.strInstructions };
-            });
-            if (!meals.length) throw new Error('not found');
-            searchStatus.textContent = `找到 ${meals.length} 道相关做法`;
-            searchResults.innerHTML = meals.map(recipe => recipeCardHTML(recipe)).join('');
-        } catch {
-            searchStatus.textContent = '暂时没找到这道菜，可以换个关键词试试';
-            searchResults.innerHTML = `<div class="recipe-empty-result">可以试试：可乐鸡翅、番茄炒蛋、西红柿炒鸡蛋、pasta、chicken</div>`;
-        }
-    };
-    searchButton.addEventListener('click', searchRecipes);
-    searchInput.addEventListener('keydown', event => { if (event.key === 'Enter') searchRecipes(); });
-    searchResults.addEventListener('click', event => {
         const saveFound = event.target.closest('.recipe-save-found');
         if (!saveFound) return;
         const maxId = appData.recipes.length ? Math.max(...appData.recipes.map(recipe => recipe.id)) : 0;
-        appData.recipes.push({ id: maxId + 1, name: saveFound.dataset.name, desc: saveFound.dataset.desc || '从搜索结果收藏的做法', date: getLocalDateKey(), image: saveFound.dataset.image });
+        appData.recipes.push({ id: maxId + 1, name: saveFound.dataset.name, desc: saveFound.dataset.desc || '从菜谱库收藏的做法', date: getLocalDateKey() });
         saveData(appData);
         renderRecipes();
         saveFound.textContent = '已记录 ✓';
@@ -553,6 +679,22 @@ function initRecipes() {
         document.getElementById('recipeDesc').value = '';
         document.getElementById('recipeDate').value = getLocalDateKey();
     });
+
+    (async () => {
+        searchStatus.textContent = `正在读取 HowToCook 完整目录，当前可先浏览 ${featuredRecipes.length} 道离线菜谱…`;
+        try {
+            const response = await fetchRecipeAPI(`${RECIPE_API_BASE}/recipes`);
+            const data = await response.json();
+            if (!response.ok || !Array.isArray(data.recipes) || !data.recipes.length) throw new Error(data.error || '目录为空');
+            recipeCatalog = data.recipes;
+            activeCategory = '全部';
+            visibleLimit = 24;
+            renderCategories();
+            searchRecipes();
+        } catch (error) {
+            searchStatus.textContent = `完整目录暂时不可用，当前显示 ${featuredRecipes.length} 道离线菜谱。`;
+        }
+    })();
 }
 
 // ============================================
@@ -732,12 +874,12 @@ function initMusicPlayer() {
     const files = document.getElementById('musicFiles');
     const defaultPlaylist = [
         {
-            name: '爱之梦 · 第三首',
-            url: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Franz_Liszt_-_Liebestraum%2C_Ab_Major.ogg'
+            name: '甜甜乌克丽丽',
+            url: 'https://upload.wikimedia.org/wikipedia/commons/0/06/Audionautix-com-ccby-happyukulele.mp3'
         },
         {
-            name: '天鹅',
-            url: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/20091104_Alisa_Weilerstein_and_Jason_Yoder_-_Saint_Sa%C3%ABns%27_The_Swan.ogg'
+            name: '小小幸福 · Felicity',
+            url: 'https://upload.wikimedia.org/wikipedia/commons/2/24/Scott_Buckley_-_Felicity.oga'
         }
     ];
     let playlist = defaultPlaylist;
@@ -1233,8 +1375,6 @@ function renderCoupleFortune(people, source) {
     });
     result.appendChild(peopleContainer);
 
-    appendFortuneText(result, 'fortune-advice', getCoupleAdvice(loveIndex));
-    appendFortuneText(result, 'fortune-source', source);
     content.replaceChildren(result);
 }
 

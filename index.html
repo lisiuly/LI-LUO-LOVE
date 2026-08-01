@@ -299,22 +299,24 @@
 
                 <div class="recipe-search-card">
                     <div class="recipe-search-heading">
-                        <div><span class="recipe-kicker">SEARCH RECIPES</span><h3>想吃什么？</h3></div>
-                        <span class="recipe-search-tip">支持中文或英文菜名</span>
+                        <div><h3>今天想做什么？</h3><p>按分类找菜，也可以直接搜食材或菜名</p></div>
+                        <a class="recipe-project-link" href="https://github.com/Anduin2017/HowToCook" target="_blank" rel="noopener">灵感来自 HowToCook</a>
                     </div>
                     <div class="recipe-search-row">
                         <label class="sr-only" for="recipeSearchInput">搜索菜名</label>
-                        <input type="search" id="recipeSearchInput" placeholder="例如：番茄炒蛋、pasta、chicken" maxlength="40">
-                        <button id="recipeSearchBtn" class="add-btn">🔎 搜索做法</button>
+                        <input type="search" id="recipeSearchInput" placeholder="搜菜名或食材，例如：鸡蛋、鸡翅" maxlength="40">
+                        <button id="recipeSearchBtn" class="add-btn">搜索菜谱</button>
                     </div>
+                    <div class="recipe-categories" id="recipeCategories" aria-label="菜谱分类"></div>
                     <div id="recipeSearchStatus" class="recipe-search-status" aria-live="polite"></div>
                     <div id="recipeSearchResults" class="recipe-search-results"></div>
+                    <button type="button" id="recipeLoadMore" class="recipe-load-more" hidden>加载更多菜谱</button>
                 </div>
 
-                <div class="recipe-recommendation" id="recipeRecommendation"></div>
+                <section class="recipe-detail-panel" id="recipeDetailPanel" hidden aria-live="polite"></section>
 
                 <div class="recipe-form-card">
-                    <div class="recipe-form-heading"><div><span class="recipe-kicker">YOUR COOKING LOG</span><h3>记录我做过的菜</h3></div><span>会保存在这台设备</span></div>
+                    <div class="recipe-form-heading"><div><h3>记录我们做过的菜</h3><p>味道、改动和想对彼此说的话，都留在这里</p></div><span>保存在这台设备</span></div>
                     <div class="recipe-form">
                         <label for="recipeName">菜名</label>
                         <input type="text" id="recipeName" placeholder="今天做了什么？" maxlength="30">
@@ -380,6 +382,7 @@
                 </button>
                 <button id="musicNext" class="music-action" type="button" aria-label="下一首" title="下一首">›</button>
                 <button id="musicAdd" class="music-add" type="button">添加歌曲</button>
+                <a class="music-credit" href="MUSIC_LICENSES.md" target="_blank" rel="noopener" aria-label="查看音乐来源与许可">来源</a>
                 <input id="musicFiles" class="visually-hidden" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg" multiple>
             </div>
         </div>
