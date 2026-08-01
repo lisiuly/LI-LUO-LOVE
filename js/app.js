@@ -718,63 +718,102 @@ function initNavigation() {
 }
 
 // ============================================
-//  音乐播放器
-// ============================================
-// ============================================
-//  音乐播放器（网易云直链）
+//  本地歌单播放器
 // ============================================
 function initMusicPlayer() {
     const audio = document.getElementById('bgMusic');
     const toggle = document.getElementById('musicToggle');
     const icon = document.getElementById('musicIcon');
     const status = document.getElementById('musicStatus');
-    
-    // 默认显示
-    status.textContent = '恋爱轻音乐 ♪';
-    
-    // 音频就绪
-    audio.addEventListener('canplay', () => {
-        status.textContent = '恋爱轻音乐 ♪';
-    });
-    
-    audio.addEventListener('error', () => {
-        status.textContent = '加载失败，换个网络试试';
-    });
+    const songName = document.getElementById('musicSongName');
+    const previous = document.getElementById('musicPrev');
+    const next = document.getElementById('musicNext');
+    const add = document.getElementById('musicAdd');
+    const files = document.getElementById('musicFiles');
+    const defaultPlaylist = [
+        {
+            name: '爱之梦 · 第三首',
+            url: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Franz_Liszt_-_Liebestraum%2C_Ab_Major.ogg'
+        },
+        {
+            name: '天鹅',
+            url: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/20091104_Alisa_Weilerstein_and_Jason_Yoder_-_Saint_Sa%C3%ABns%27_The_Swan.ogg'
+        }
+    ];
+    let playlist = defaultPlaylist;
+    let currentIndex = 0;
 
-    const tryAutoplay = () => audio.play().catch(() => {
-        status.textContent = '轻触页面播放音乐 ♪';
-    });
-    tryAutoplay();
-    document.addEventListener('pointerdown', tryAutoplay, { once: true });
-    
-    // 点击按钮播放/暂停
+    const cleanSongName = filename => filename.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+
+    const updatePlayButton = playing => {
+        toggle.classList.toggle('playing', playing);
+        icon.textContent = playing ? 'Ⅱ' : '▶';
+        toggle.setAttribute('aria-label', playing ? '暂停' : '播放');
+        toggle.title = playing ? '暂停' : '播放';
+    };
+
+    const loadSong = (index, shouldPlay = false) => {
+        if (!playlist.length) {
+            files.click();
+            return;
+        }
+        currentIndex = (index + playlist.length) % playlist.length;
+        audio.src = playlist[currentIndex].url;
+        songName.textContent = playlist[currentIndex].name;
+        status.textContent = `${currentIndex + 1} / ${playlist.length}`;
+        updatePlayButton(false);
+        if (shouldPlay) {
+            audio.play().catch(() => {
+                status.textContent = '无法播放，请换一个音频文件';
+            });
+        }
+    };
+
     toggle.addEventListener('click', () => {
+        if (!playlist.length) {
+            files.click();
+            return;
+        }
         if (audio.paused) {
-            audio.play().then(() => {
-                toggle.classList.add('playing');
-                icon.textContent = '🎵';
-                status.textContent = '恋爱轻音乐 ♪';
-            }).catch(err => {
-                // 浏览器阻止自动播放，提示用户点击
-                status.textContent = '点击音符播放';
-                console.log('播放被阻止，请点击音符');
+            audio.play().catch(() => {
+                status.textContent = '无法播放，请换一个音频文件';
             });
         } else {
             audio.pause();
-            toggle.classList.remove('playing');
-            icon.textContent = '🎵';
-            status.textContent = '恋爱轻音乐 ♪';
         }
     });
-    
-    // 正在播放
+
+    previous.addEventListener('click', () => loadSong(currentIndex - 1, !audio.paused));
+    next.addEventListener('click', () => loadSong(currentIndex + 1, !audio.paused));
+    add.addEventListener('click', () => files.click());
+
+    files.addEventListener('change', () => {
+        playlist.filter(song => song.local).forEach(song => URL.revokeObjectURL(song.url));
+        playlist = Array.from(files.files).map(file => ({
+            name: cleanSongName(file.name),
+            url: URL.createObjectURL(file),
+            local: true
+        }));
+        if (playlist.length) loadSong(0, false);
+    });
+
     audio.addEventListener('play', () => {
-        toggle.classList.add('playing');
+        updatePlayButton(true);
+        status.textContent = `${currentIndex + 1} / ${playlist.length} · 正在播放`;
     });
-    
+
     audio.addEventListener('pause', () => {
-        toggle.classList.remove('playing');
+        updatePlayButton(false);
+        if (playlist.length) status.textContent = `${currentIndex + 1} / ${playlist.length} · 已暂停`;
     });
+
+    audio.addEventListener('ended', () => loadSong(currentIndex + 1, true));
+    audio.addEventListener('error', () => {
+        status.textContent = '网络加载失败，可以添加本地歌曲';
+        updatePlayButton(false);
+    });
+
+    loadSong(0, false);
 }
 
 // ============================================

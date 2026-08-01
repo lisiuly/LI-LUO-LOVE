@@ -365,16 +365,22 @@
 
     <!-- 音乐播放器 -->
     <div id="musicPlayer" class="music-player">
-        <audio id="bgMusic" loop preload="auto" autoplay playsinline>
-            <source src="https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3" type="audio/mpeg">
-        </audio>
+        <audio id="bgMusic" preload="metadata" playsinline></audio>
         <div class="music-controls" id="musicControls">
-            <span class="music-songname">🎵 恋爱轻音乐</span>
-            <span id="musicStatus" class="music-status">点击音符播放</span>
+            <div class="music-copy" aria-live="polite">
+                <span id="musicSongName" class="music-songname">你们的歌单</span>
+                <span id="musicStatus" class="music-status">先添加喜欢的歌曲</span>
+            </div>
+            <div class="music-actions">
+                <button id="musicPrev" class="music-action" type="button" aria-label="上一首" title="上一首">‹</button>
+                <button id="musicToggle" class="music-toggle" type="button" aria-label="播放" title="播放">
+                    <span id="musicIcon" aria-hidden="true">▶</span>
+                </button>
+                <button id="musicNext" class="music-action" type="button" aria-label="下一首" title="下一首">›</button>
+                <button id="musicAdd" class="music-add" type="button">添加歌曲</button>
+                <input id="musicFiles" class="visually-hidden" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg" multiple>
+            </div>
         </div>
-        <button id="musicToggle" class="music-toggle" title="播放/暂停音乐">
-            <span id="musicIcon">🎵</span>
-        </button>
     </div>
 
     <!-- 照片预览弹窗 -->
