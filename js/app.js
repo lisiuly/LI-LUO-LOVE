@@ -1056,8 +1056,8 @@ function initWeather() {
 // ============================================
 //  🔮 今日运势
 // ============================================
-const HOROSCOPE_API = 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
-const FORTUNE_CACHE_KEY = 'loveSiteCoupleFortuneV3';
+const HOROSCOPE_API = 'https://li-luo-love.vercel.app/api/horoscope';
+const FORTUNE_CACHE_KEY = 'loveSiteCoupleFortuneV4';
 const ZODIAC_API_NAMES = { '摩羯座':'Capricorn', '水瓶座':'Aquarius', '双鱼座':'Pisces', '白羊座':'Aries', '金牛座':'Taurus', '双子座':'Gemini', '巨蟹座':'Cancer', '狮子座':'Leo', '处女座':'Virgo', '天秤座':'Libra', '天蝎座':'Scorpio', '射手座':'Sagittarius' };
 
 const zodiacSigns = [
@@ -1107,22 +1107,25 @@ async function fetchSignFortune(person) {
 
     try {
         const apiSign = ZODIAC_API_NAMES[person.sign.name] || person.sign.name;
-        const url = `${HOROSCOPE_API}?sign=${encodeURIComponent(apiSign)}&day=TODAY`;
+        const url = `${HOROSCOPE_API}?astro=${encodeURIComponent(apiSign.toLowerCase())}`;
         const response = await fetch(url, { signal: controller.signal });
         if (!response.ok) throw new Error(`Horoscope HTTP ${response.status}`);
 
-        const payload = await response.json();
-        if (!payload.data) throw new Error('Invalid horoscope response');
-        const data = payload.data;
+        const data = await response.json();
+        const toFive = value => normalizeScore(Math.round((Number(value) || 60) / 20));
         return {
             name: person.name,
             sign: person.sign.name,
             birthday: `${person.birthday.month}.${person.birthday.day}`,
-            loveScore: normalizeScore(data.fortune?.love),
-            overallScore: normalizeScore(data.fortune?.all),
-            loveText: data.horoscope_data || data.fortunetext?.love || data.shortcomment || '今天适合把真实想法说清楚，给彼此一个及时回应。',
-            luckyColor: data.luckycolor || '',
-            luckyNumber: data.luckynumber || ''
+            loveScore: toFive(data.scores?.love),
+            overallScore: toFive(data.scores?.overall),
+            workScore: data.scores?.work,
+            moneyScore: data.scores?.money,
+            healthScore: data.scores?.health,
+            loveText: data.summary || '今天适合把真实想法说清楚，给彼此一个及时回应。',
+            luckyColor: data.luckyColor || '',
+            luckyNumber: data.luckyNumber || '',
+            luckyConstellation: data.luckyConstellation || ''
         };
     } finally {
         clearTimeout(timeout);
@@ -1219,6 +1222,12 @@ function renderCoupleFortune(people, source) {
         item.className = 'fortune-person';
         appendFortuneText(item, 'fortune-person-name', `${person.name} · ${person.sign} (${person.birthday})`);
         appendFortuneText(item, 'fortune-stars', `${'★'.repeat(person.loveScore)}${'☆'.repeat(5 - person.loveScore)}`);
+        const indicators = [
+            Number.isFinite(person.workScore) ? `工作 ${person.workScore}%` : '',
+            Number.isFinite(person.moneyScore) ? `财运 ${person.moneyScore}%` : '',
+            Number.isFinite(person.healthScore) ? `健康 ${person.healthScore}%` : ''
+        ].filter(Boolean).join(' · ');
+        if (indicators) appendFortuneText(item, 'fortune-indicators', indicators);
         appendFortuneText(item, 'fortune-person-text', person.loveText);
         peopleContainer.appendChild(item);
     });
@@ -1234,7 +1243,7 @@ async function displayFortune(forceRefresh = false) {
     const refreshButton = document.querySelector('.fortune-refresh');
     const cached = forceRefresh ? null : loadFortuneCache();
     if (cached) {
-        renderCoupleFortune(cached, '今日公开日运 · 已缓存');
+        renderCoupleFortune(cached, '天行数据今日运势 · 已缓存');
         return;
     }
     content.innerHTML = '<div class="fortune-loading">正在生成今日双人运势...</div>';
@@ -1242,7 +1251,7 @@ async function displayFortune(forceRefresh = false) {
     try {
         const people = await Promise.all(getCoupleSigns().map(fetchSignFortune));
         saveFortuneCache(people);
-        renderCoupleFortune(people, '今日公开日运 · 实时读取');
+        renderCoupleFortune(people, '天行数据今日运势 · 实时读取');
     } catch (error) {
         console.warn('Public horoscope unavailable:', error);
         renderCoupleFortune(getLocalCoupleFortune(), '公开接口暂不可用 · 本地日期参考');

@@ -1195,6 +1195,13 @@ body::after {
     line-height: 1.55;
 }
 
+.fortune-indicators {
+    margin: 6px 0;
+    color: #9a6b50;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
 .fortune-advice {
     margin-top: 11px;
     padding: 9px 10px;
@@ -1870,25 +1877,22 @@ body::after {
     margin-top: 30px;
 }
 
-.footer-icons {
+.footer-title {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 
-.footer-icon {
-    width: 32px;
-    height: 32px;
+.footer-character {
+    width: 54px;
+    height: 54px;
     object-fit: contain;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
 }
 
-.footer-icon:hover {
-    opacity: 1;
-}
+.footer-heart { font-size: 17px; }
+.footer-garden-name { color: #855a43; font-size: 16px; line-height: 1.4; }
 
 .site-footer p {
     font-size: 16px;
@@ -2328,11 +2332,18 @@ body::after {
 .recipe-entry-delete { opacity:.65; font-size:12px; color:#a46b4d; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
-/* 计时器在小屏也保持清楚的数字与单位对应关系 */
-.timer-display { gap:clamp(3px,1.2vw,9px); white-space:nowrap; }
+/* 计时器：四位天数获得独立空间，分隔线与数字保持稳定留白 */
+.timer-display {
+    display:grid;
+    grid-template-columns:minmax(0,1.55fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);
+    column-gap:clamp(6px,.65vw,9px);
+    width:100%;
+    white-space:nowrap;
+}
 .timer-card { min-width:0; overflow:hidden; }
-.timer-block { min-width:clamp(38px,7vw,65px); }
-.timer-num { font-size:clamp(28px,3.4vw,42px); letter-spacing:clamp(0px,.12vw,2px); }
+.timer-block { min-width:0; width:100%; }
+.timer-num { font-size:clamp(28px,2.5vw,36px); letter-spacing:clamp(0px,.08vw,1px); }
+.timer-sep { justify-self:center; min-width:4px; }
 .timer-label { letter-spacing:1px; }
 
 @media (max-width: 600px) {
@@ -2401,6 +2412,9 @@ body::after {
     .milestone-date { min-width:82px; font-size:11px; }
     .milestone-text { font-size:13px; }
     .music-player { transform:scale(.92); transform-origin:bottom right; }
+    .footer-title { gap:6px; }
+    .footer-character { width:46px; height:46px; }
+    .footer-garden-name { font-size:14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
