@@ -271,6 +271,15 @@
                     <div class="diary-form">
                         <input type="text" id="diaryTitle" placeholder="今天是什么日子？" maxlength="40">
                         <textarea id="diaryContent" placeholder="写下你想对她说的话..." rows="4"></textarea>
+                        <div class="diary-image-picker">
+                            <label class="diary-image-button" for="diaryImageInput">📷 添加照片</label>
+                            <input type="file" id="diaryImageInput" accept="image/*" hidden>
+                            <span class="diary-image-hint">记录这一刻的画面（单张图片）</span>
+                        </div>
+                        <div id="diaryImagePreview" class="diary-image-preview" hidden>
+                            <img id="diaryImagePreviewImg" src="" alt="待保存的日记图片">
+                            <button type="button" id="removeDiaryImage" class="diary-image-remove">移除图片</button>
+                        </div>
                         <div class="diary-form-footer">
                             <input type="date" id="diaryDate">
                             <button id="addDiaryBtn" class="add-btn">💾 保存日记</button>
@@ -286,16 +295,34 @@
             <!-- ===== 食谱日记 ===== -->
             <section id="page-recipe" class="page">
                 <h2 class="page-title">🍳 食谱日记</h2>
-                <p class="page-desc">为你做的好吃的 😋</p>
+                <p class="page-desc">搜做法、看推荐，也把今天做过的菜留下来 😋</p>
+
+                <div class="recipe-search-card">
+                    <div class="recipe-search-heading">
+                        <div><span class="recipe-kicker">SEARCH RECIPES</span><h3>想吃什么？</h3></div>
+                        <span class="recipe-search-tip">支持中文或英文菜名</span>
+                    </div>
+                    <div class="recipe-search-row">
+                        <label class="sr-only" for="recipeSearchInput">搜索菜名</label>
+                        <input type="search" id="recipeSearchInput" placeholder="例如：番茄炒蛋、pasta、chicken" maxlength="40">
+                        <button id="recipeSearchBtn" class="add-btn">🔎 搜索做法</button>
+                    </div>
+                    <div id="recipeSearchStatus" class="recipe-search-status" aria-live="polite"></div>
+                    <div id="recipeSearchResults" class="recipe-search-results"></div>
+                </div>
+
+                <div class="recipe-recommendation" id="recipeRecommendation"></div>
 
                 <div class="recipe-form-card">
-                    <h3>🍽️ 记录新食谱</h3>
+                    <div class="recipe-form-heading"><div><span class="recipe-kicker">YOUR COOKING LOG</span><h3>记录我做过的菜</h3></div><span>会保存在这台设备</span></div>
                     <div class="recipe-form">
-                        <input type="text" id="recipeName" placeholder="菜名是什么？" maxlength="30">
-                        <textarea id="recipeDesc" placeholder="描述一下这道菜..." rows="3"></textarea>
+                        <label for="recipeName">菜名</label>
+                        <input type="text" id="recipeName" placeholder="今天做了什么？" maxlength="30">
+                        <label for="recipeDesc">备注</label>
+                        <textarea id="recipeDesc" placeholder="味道、搭配，或想对对方说的话……" rows="3" maxlength="240"></textarea>
                         <div class="recipe-form-footer">
-                            <input type="date" id="recipeDate">
-                            <button id="addRecipeBtn" class="add-btn">📝 记录</button>
+                            <label class="date-field" for="recipeDate">制作日期<input type="date" id="recipeDate"></label>
+                            <button id="addRecipeBtn" class="add-btn">📝 保存记录</button>
                         </div>
                     </div>
                 </div>
@@ -330,19 +357,19 @@
                 <span class="character-avatar xiaobai footer-icon" aria-hidden="true"></span>
                 <span>💕</span>
                 <span class="character-avatar xiaojimao footer-icon" aria-hidden="true"></span>
-            </div><p>🐶 希宝 & 小李的秘密花园 🐶</p>
+            </div><p>小白 & 小鸡毛的秘密花园</p>
             <p class="footer-sub">从2021年6月26日开始，一直走下去 🐾</p>
-            <div class="footer-emoji">🐶 💕 🌸 🐾 🌺 💕 🐻</div>
+            <div class="footer-emoji">🐾 💕 🐾</div>
         </footer>
     </div>
 
     <!-- 音乐播放器 -->
     <div id="musicPlayer" class="music-player">
         <audio id="bgMusic" loop preload="auto" autoplay playsinline>
-            <source src="https://music.163.com/song/media/outer/url?id=1466649056.mp3" type="audio/mpeg">
+            <source src="https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3" type="audio/mpeg">
         </audio>
         <div class="music-controls" id="musicControls">
-            <span class="music-songname">🎵 狂恋你 - 沈以诚</span>
+            <span class="music-songname">🎵 恋爱轻音乐</span>
             <span id="musicStatus" class="music-status">点击音符播放</span>
         </div>
         <button id="musicToggle" class="music-toggle" title="播放/暂停音乐">

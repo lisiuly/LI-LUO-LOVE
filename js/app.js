@@ -1,5 +1,5 @@
 ﻿// ============================================
-//  � 希宝 & 小李 🐻 - 秘密花园 🐾
+//  希宝 & 小李 · 秘密花园
 // ============================================
 
 // ---- 配置 ----
@@ -53,6 +53,7 @@ function saveData(data) {
 }
 
 let appData = loadData();
+let diaryImageData = '';
 
 // ============================================
 //  花瓣飘落效果
@@ -334,11 +335,12 @@ function renderDiaries() {
         div.className = 'diary-entry';
         div.innerHTML = `
             <div class="diary-entry-header">
-                <span class="diary-entry-title">💕 ${diary.title}</span>
-                <span class="diary-entry-date">📅 ${diary.date}</span>
+                <span class="diary-entry-title">💕 ${escapeHTML(diary.title)}</span>
+                <span class="diary-entry-date">📅 ${escapeHTML(diary.date)}</span>
             </div>
-            <div class="diary-entry-content">${diary.content}</div>
-            <button class="diary-entry-delete" data-id="${diary.id}">🗑️</button>
+            ${diary.image ? `<img class="diary-entry-image" src="${diary.image}" alt="${escapeHTML(diary.title)}的记录图片" loading="lazy">` : ''}
+            <div class="diary-entry-content">${escapeHTML(diary.content)}</div>
+            <button class="diary-entry-delete" data-id="${diary.id}" aria-label="删除${escapeHTML(diary.title)}">删除</button>
         `;
         list.appendChild(div);
     });
@@ -346,6 +348,39 @@ function renderDiaries() {
 
 function initDiaries() {
     renderDiaries();
+    document.getElementById('diaryDate').value = getLocalDateKey();
+    const imageInput = document.getElementById('diaryImageInput');
+    const preview = document.getElementById('diaryImagePreview');
+    const previewImg = document.getElementById('diaryImagePreviewImg');
+    const clearImage = () => {
+        diaryImageData = '';
+        imageInput.value = '';
+        preview.hidden = true;
+        previewImg.src = '';
+    };
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) { alert('请选择图片文件'); clearImage(); return; }
+        if (file.size > 8 * 1024 * 1024) { alert('图片不能超过 8MB'); clearImage(); return; }
+        const reader = new FileReader();
+        reader.onload = event => {
+            const image = new Image();
+            image.onload = () => {
+                const scale = Math.min(1, 1200 / Math.max(image.width, image.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(image.width * scale);
+                canvas.height = Math.round(image.height * scale);
+                canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+                diaryImageData = canvas.toDataURL('image/jpeg', 0.82);
+                previewImg.src = diaryImageData;
+                preview.hidden = false;
+            };
+            image.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+    document.getElementById('removeDiaryImage').addEventListener('click', clearImage);
 
     document.getElementById('diaryList').addEventListener('click', (e) => {
         const deleteBtn = e.target.closest('.diary-entry-delete');
@@ -368,19 +403,48 @@ function initDiaries() {
         }
 
         const maxId = appData.diaries.length > 0 ? Math.max(...appData.diaries.map(d => d.id)) : 0;
-        appData.diaries.push({ id: maxId + 1, title, content, date });
+        appData.diaries.push({ id: maxId + 1, title, content, date, image: diaryImageData });
         saveData(appData);
         renderDiaries();
 
         document.getElementById('diaryTitle').value = '';
         document.getElementById('diaryContent').value = '';
-        document.getElementById('diaryDate').value = '';
+        document.getElementById('diaryDate').value = getLocalDateKey();
+        clearImage();
     });
 }
 
 // ============================================
 //  食谱日记
 // ============================================
+const featuredRecipes = [
+    { name: '可乐鸡翅', aliases: ['可乐鸡翅','鸡翅可乐'], image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=1000&q=85', summary: '甜咸入味、色泽油亮的家常硬菜。', ingredients: ['鸡翅中 8只（约500克）','可乐 330毫升','生抽 2汤匙','老抽 1茶匙（上色）','料酒 1汤匙','姜 5片','葱 2段','盐 1/3茶匙','食用油 1汤匙'], steps: ['鸡翅洗净，两面各划两刀；用料酒、2片姜腌 15 分钟。', '冷水下锅，加鸡翅和姜片，大火煮开后撇去浮沫，继续煮 2 分钟，捞出擦干。', '锅烧热放油，鸡翅皮面朝下，中火煎 3 到 4 分钟，翻面再煎 2 分钟，煎到两面金黄。', '加入葱段、剩余姜片、生抽、老抽和可乐；可乐液面到鸡翅一半即可。', '大火煮开后转中小火，加盖焖 15 分钟，中途翻面一次。', '开盖转大火收汁 3 到 5 分钟，汁变浓亮并能挂在鸡翅上即可；尝味后再决定是否加盐。'] },
+    { name: '番茄炒蛋', aliases: ['番茄炒蛋','西红柿炒鸡蛋'], image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=80', summary: '酸甜开胃，十分钟就能端上桌。', ingredients: ['番茄 2个','鸡蛋 3个','盐 1/2茶匙','白糖 1/2茶匙','食用油 2汤匙','葱花 少许'], steps: ['番茄切块，鸡蛋加 1 汤匙清水和少许盐打散。', '锅烧热放 1 汤匙油，倒入蛋液，炒到刚凝固就盛出，保持嫩度。', '补少许油，下番茄中火炒 2 到 3 分钟，炒出汁后加糖和盐。', '倒回鸡蛋，大火翻匀 30 秒，撒葱花出锅。'] },
+    { name: '蒜香虾仁意面', image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=900&q=80', summary: '适合两个人一起完成的晚餐。', steps: '意面煮熟备用。蒜末和虾仁炒香，加入黑胡椒与少量煮面水，拌入意面即可。' },
+    { name: '照烧鸡腿饭', image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=80', summary: '甜咸浓郁，配一碗热米饭。', steps: '鸡腿去骨煎至两面金黄，加入生抽、蜂蜜和清水，小火收汁后切块铺在米饭上。' },
+    { name: '牛油果鸡蛋吐司', image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=900&q=80', summary: '清爽的周末早餐。', steps: '吐司烤脆，牛油果压泥加盐和黑胡椒，铺上水煮蛋或煎蛋即可。' }
+];
+
+function escapeHTML(value = '') {
+    return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+}
+
+function recipeCardHTML(recipe, action = true) {
+    const image = recipe.image || featuredRecipes[recipe.id % featuredRecipes.length].image;
+    const actionButton = action ? `<button class="recipe-save-found" data-name="${escapeHTML(recipe.name)}" data-desc="${escapeHTML(recipe.instructions || recipe.steps || recipe.summary || '')}" data-image="${escapeHTML(image)}">记入我的食谱</button>` : '';
+    const ingredients = recipe.ingredients || [];
+    const steps = Array.isArray(recipe.steps) ? recipe.steps : (recipe.instructions ? recipe.instructions.split(/\n+/).filter(Boolean) : []);
+    return `<article class="recipe-result-card"><img src="${escapeHTML(image)}" alt="${escapeHTML(recipe.name)}" loading="lazy"><div class="recipe-result-body"><h4>${escapeHTML(recipe.name)}</h4><p class="recipe-summary">${escapeHTML(recipe.summary || '一份值得和喜欢的人一起分享的料理。')}</p>${ingredients.length ? `<section class="recipe-detail-section"><strong>准备食材</strong><ul>${ingredients.map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul></section>` : ''}${steps.length ? `<details class="recipe-detail-section" open><summary>详细步骤</summary><ol>${steps.map(step => `<li>${escapeHTML(step)}</li>`).join('')}</ol></details>` : ''}${actionButton}</div></article>`;
+}
+
+function renderDailyRecommendation() {
+    const target = document.getElementById('recipeRecommendation');
+    if (!target) return;
+    const day = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const recipe = featuredRecipes[day % featuredRecipes.length];
+    target.innerHTML = `<div class="recommendation-copy"><span class="recipe-kicker">TODAY'S PICK · ${getLocalDateKey()}</span><h3>今日推荐：${escapeHTML(recipe.name)}</h3><p>${escapeHTML(recipe.summary)}</p></div><img src="${recipe.image}" alt="今日推荐 ${escapeHTML(recipe.name)}" loading="lazy"><div class="recommendation-steps"><strong>快速做法</strong><span>${escapeHTML(recipe.steps)}</span></div>`;
+}
+
 function renderRecipes() {
     const grid = document.getElementById('recipeGrid');
     grid.innerHTML = '';
@@ -398,15 +462,13 @@ function renderRecipes() {
     const foodIcons = ['🍚', '🍜', '🍝', '🍛', '🍣', '🥟', '🍲', '🥗', '🍕', '🥘', '🍰', '🍨'];
     const sorted = [...appData.recipes].reverse();
     sorted.forEach(recipe => {
-        const icon = foodIcons[recipe.id % foodIcons.length];
         const div = document.createElement('div');
         div.className = 'recipe-entry';
         div.innerHTML = `
-            <div class="recipe-entry-icon">${icon}</div>
-            <div class="recipe-entry-title">${recipe.name}</div>
-            <div class="recipe-entry-desc">${recipe.desc}</div>
-            <div class="recipe-entry-date">📅 ${recipe.date}</div>
-            <button class="recipe-entry-delete" data-id="${recipe.id}">🗑️</button>
+            <div class="recipe-entry-title">${escapeHTML(recipe.name)}</div>
+            <div class="recipe-entry-desc">${escapeHTML(recipe.desc)}</div>
+            <div class="recipe-entry-date">📅 ${escapeHTML(recipe.date)}</div>
+            <button class="recipe-entry-delete" data-id="${recipe.id}" aria-label="删除${escapeHTML(recipe.name)}">删除</button>
         `;
         grid.appendChild(div);
     });
@@ -414,6 +476,53 @@ function renderRecipes() {
 
 function initRecipes() {
     renderRecipes();
+    renderDailyRecommendation();
+    document.getElementById('recipeDate').value = getLocalDateKey();
+
+    const searchInput = document.getElementById('recipeSearchInput');
+    const searchButton = document.getElementById('recipeSearchBtn');
+    const searchStatus = document.getElementById('recipeSearchStatus');
+    const searchResults = document.getElementById('recipeSearchResults');
+    const searchRecipes = async () => {
+        const query = searchInput.value.trim();
+        if (!query) { searchStatus.textContent = '先输入一道菜名，例如“番茄炒蛋”'; return; }
+        searchStatus.textContent = '正在找做法……';
+        searchResults.innerHTML = '';
+        const normalizedQuery = query.toLowerCase().replace(/[\s·炒]/g, '');
+        const local = featuredRecipes.filter(recipe => [recipe.name, ...(recipe.aliases || [])].some(alias => normalizedQuery.includes(alias.toLowerCase().replace(/[\s·炒]/g, '')) || alias.toLowerCase().replace(/[\s·炒]/g, '').includes(normalizedQuery)));
+        if (local.length) {
+            searchStatus.textContent = `已找到 ${local.length} 道中文家常菜做法`;
+            searchResults.innerHTML = local.map(recipe => recipeCardHTML(recipe)).join('');
+            return;
+        }
+        try {
+            const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            const meals = (data.meals || []).slice(0, 6).map(meal => {
+                const ingredients = [];
+                for (let i = 1; i <= 20; i++) if (meal[`strIngredient${i}`]) ingredients.push(`${meal[`strMeasure${i}`] || ''}${meal[`strIngredient${i}`]}`);
+                return { name: meal.strMeal, image: meal.strMealThumb, summary: `${meal.strArea || '家常'}料理`, ingredients, instructions: meal.strInstructions };
+            });
+            if (!meals.length) throw new Error('not found');
+            searchStatus.textContent = `找到 ${meals.length} 道相关做法`;
+            searchResults.innerHTML = meals.map(recipe => recipeCardHTML(recipe)).join('');
+        } catch {
+            searchStatus.textContent = '暂时没找到这道菜，可以换个关键词试试';
+            searchResults.innerHTML = `<div class="recipe-empty-result">可以试试：可乐鸡翅、番茄炒蛋、西红柿炒鸡蛋、pasta、chicken</div>`;
+        }
+    };
+    searchButton.addEventListener('click', searchRecipes);
+    searchInput.addEventListener('keydown', event => { if (event.key === 'Enter') searchRecipes(); });
+    searchResults.addEventListener('click', event => {
+        const saveFound = event.target.closest('.recipe-save-found');
+        if (!saveFound) return;
+        const maxId = appData.recipes.length ? Math.max(...appData.recipes.map(recipe => recipe.id)) : 0;
+        appData.recipes.push({ id: maxId + 1, name: saveFound.dataset.name, desc: saveFound.dataset.desc || '从搜索结果收藏的做法', date: getLocalDateKey(), image: saveFound.dataset.image });
+        saveData(appData);
+        renderRecipes();
+        saveFound.textContent = '已记录 ✓';
+        saveFound.disabled = true;
+    });
 
     document.getElementById('recipeGrid').addEventListener('click', (e) => {
         const deleteBtn = e.target.closest('.recipe-entry-delete');
@@ -442,7 +551,7 @@ function initRecipes() {
 
         document.getElementById('recipeName').value = '';
         document.getElementById('recipeDesc').value = '';
-        document.getElementById('recipeDate').value = '';
+        document.getElementById('recipeDate').value = getLocalDateKey();
     });
 }
 
@@ -621,11 +730,11 @@ function initMusicPlayer() {
     const status = document.getElementById('musicStatus');
     
     // 默认显示
-    status.textContent = '狂恋你 ♪';
+    status.textContent = '恋爱轻音乐 ♪';
     
     // 音频就绪
     audio.addEventListener('canplay', () => {
-        status.textContent = '狂恋你 - 沈以诚 ♪';
+        status.textContent = '恋爱轻音乐 ♪';
     });
     
     audio.addEventListener('error', () => {
@@ -644,7 +753,7 @@ function initMusicPlayer() {
             audio.play().then(() => {
                 toggle.classList.add('playing');
                 icon.textContent = '🎵';
-                status.textContent = '狂恋你 - 沈以诚 ♪';
+                status.textContent = '恋爱轻音乐 ♪';
             }).catch(err => {
                 // 浏览器阻止自动播放，提示用户点击
                 status.textContent = '点击音符播放';
@@ -654,7 +763,7 @@ function initMusicPlayer() {
             audio.pause();
             toggle.classList.remove('playing');
             icon.textContent = '🎵';
-            status.textContent = '狂恋你 ♪';
+            status.textContent = '恋爱轻音乐 ♪';
         }
     });
     
@@ -701,7 +810,7 @@ function initMainSite() {
 }
 
 // ============================================
-//  🐶🐻 启动！
+//  线条小狗秘密花园启动
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = 'hidden';
@@ -789,6 +898,24 @@ async function fetchWeatherByCoords(latitude, longitude, city = '当前位置') 
     }
 }
 
+async function fetchWeatherForCity(city) {
+    const name = city.trim() || '深圳';
+    try {
+        const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=zh&format=json`);
+        const result = await response.json();
+        const place = result.results?.[0];
+        if (!place) throw new Error('city not found');
+        const displayName = place.name || name;
+        document.getElementById('cityInput').value = displayName;
+        localStorage.setItem('loveSiteCity', displayName);
+        fetchWeatherByCoords(place.latitude, place.longitude, displayName);
+    } catch {
+        document.getElementById('cityInput').value = '深圳';
+        localStorage.setItem('loveSiteCity', '深圳');
+        fetchWeatherByCoords(22.5431, 114.0579, '深圳');
+    }
+}
+
 function translateWeatherDesc(text) {
     const map = {
         'Sunny': '晴', 'Clear': '晴',
@@ -847,7 +974,7 @@ function initWeather() {
         const finalCity = city || '深圳';
         document.getElementById('cityInput').value = finalCity;
         localStorage.setItem('loveSiteCity', finalCity);
-        fetchWeather(finalCity);
+        fetchWeatherForCity(finalCity);
     };
 
     if ('geolocation' in navigator) {
@@ -878,7 +1005,7 @@ function initWeather() {
         const city = document.getElementById('cityInput').value.trim();
         if (city) {
             localStorage.setItem('loveSiteCity', city);
-            fetchWeather(city);
+            fetchWeatherForCity(city);
         }
     });
 
@@ -890,8 +1017,9 @@ function initWeather() {
 // ============================================
 //  🔮 今日运势
 // ============================================
-const HOROSCOPE_API = 'https://api.vvhan.com/api/horoscope';
-const FORTUNE_CACHE_KEY = 'loveSiteCoupleFortuneV2';
+const HOROSCOPE_API = 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
+const FORTUNE_CACHE_KEY = 'loveSiteCoupleFortuneV3';
+const ZODIAC_API_NAMES = { '摩羯座':'Capricorn', '水瓶座':'Aquarius', '双鱼座':'Pisces', '白羊座':'Aries', '金牛座':'Taurus', '双子座':'Gemini', '巨蟹座':'Cancer', '狮子座':'Leo', '处女座':'Virgo', '天秤座':'Libra', '天蝎座':'Scorpio', '射手座':'Sagittarius' };
 
 const zodiacSigns = [
     { name: '摩羯座', type: 'capricorn', start: 1222, end: 119 },
@@ -939,13 +1067,13 @@ async function fetchSignFortune(person) {
     const timeout = setTimeout(() => controller.abort(), 8000);
 
     try {
-        const url = `${HOROSCOPE_API}?type=${encodeURIComponent(person.sign.type)}&time=today`;
+        const apiSign = ZODIAC_API_NAMES[person.sign.name] || person.sign.name;
+        const url = `${HOROSCOPE_API}?sign=${encodeURIComponent(apiSign)}&day=TODAY`;
         const response = await fetch(url, { signal: controller.signal });
         if (!response.ok) throw new Error(`Horoscope HTTP ${response.status}`);
 
         const payload = await response.json();
-        if (!payload.success || !payload.data) throw new Error('Invalid horoscope response');
-
+        if (!payload.data) throw new Error('Invalid horoscope response');
         const data = payload.data;
         return {
             name: person.name,
@@ -953,7 +1081,7 @@ async function fetchSignFortune(person) {
             birthday: `${person.birthday.month}.${person.birthday.day}`,
             loveScore: normalizeScore(data.fortune?.love),
             overallScore: normalizeScore(data.fortune?.all),
-            loveText: data.fortunetext?.love || data.shortcomment || '适合多听听彼此今天真正的想法。',
+            loveText: data.horoscope_data || data.fortunetext?.love || data.shortcomment || '今天适合把真实想法说清楚，给彼此一个及时回应。',
             luckyColor: data.luckycolor || '',
             luckyNumber: data.luckynumber || ''
         };
@@ -1066,22 +1194,19 @@ async function displayFortune(forceRefresh = false) {
     const content = document.getElementById('fortuneContent');
     const refreshButton = document.querySelector('.fortune-refresh');
     const cached = forceRefresh ? null : loadFortuneCache();
-
     if (cached) {
-        renderCoupleFortune(cached, '数据来源：今日星座日运 · 已缓存');
+        renderCoupleFortune(cached, '今日公开日运 · 已缓存');
         return;
     }
-
-    content.innerHTML = '<div class="fortune-loading">正在读取双子座与射手座日运...</div>';
+    content.innerHTML = '<div class="fortune-loading">正在生成今日双人运势...</div>';
     if (refreshButton) refreshButton.disabled = true;
-
     try {
         const people = await Promise.all(getCoupleSigns().map(fetchSignFortune));
         saveFortuneCache(people);
-        renderCoupleFortune(people, '数据来源：公开星座日运 · 今日实时');
+        renderCoupleFortune(people, '今日公开日运 · 实时读取');
     } catch (error) {
-        console.warn('Live horoscope unavailable:', error);
-        renderCoupleFortune(getLocalCoupleFortune(), '实时日运暂不可用 · 当前为本地星座参考');
+        console.warn('Public horoscope unavailable:', error);
+        renderCoupleFortune(getLocalCoupleFortune(), '公开接口暂不可用 · 本地日期参考');
     } finally {
         if (refreshButton) refreshButton.disabled = false;
     }
