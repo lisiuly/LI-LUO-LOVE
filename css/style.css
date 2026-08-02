@@ -2531,10 +2531,7 @@ body::after {
 .recipe-similar h4 { margin:0 0 10px; color:#69483a; }
 .recipe-similar > div { display:flex; flex-wrap:wrap; gap:8px; }
 .recipe-similar button { min-height:38px; padding:7px 11px; border:1px solid #e1c8b6; border-radius:9px; background:#fff; color:#805c4c; cursor:pointer; font:inherit; font-size:11px; }
-body[data-active-page="recipe"] .music-controls { max-width:none; padding:7px; }
-body[data-active-page="recipe"] .music-songname,
-body[data-active-page="recipe"] .music-add,
-body[data-active-page="recipe"] .music-credit { display:none; }
+body[data-active-page="recipe"] .music-player { display:none; }
 
 @media (max-width:1000px) {
     .cookbook-results { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -2565,7 +2562,6 @@ body[data-active-page="recipe"] .music-credit { display:none; }
     .cookbook-card-copy { padding:13px; }
     .cookbook-card-summary { -webkit-line-clamp:2; }
     .recipe-pagination { flex-wrap:wrap; }
-    body[data-active-page="recipe"] .music-player { transform:none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
