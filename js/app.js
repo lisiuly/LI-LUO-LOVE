@@ -436,6 +436,23 @@ function escapeHTML(value = '') {
 
 let recipeCatalog = featuredRecipes;
 const RECIPE_API_BASE = 'https://li-luo-love.vercel.app/api';
+const RECIPE_SEARCH_ALIASES = [
+    [['番茄'], '西红柿'],
+    [['马铃薯'], '土豆'],
+    [['红薯', '番薯'], '地瓜'],
+    [['卷心菜', '圆白菜', '洋白菜'], '包菜'],
+    [['菜花'], '花菜'],
+    [['柿子椒'], '青椒'],
+    [['炒蛋'], '炒鸡蛋']
+];
+
+function normalizeRecipeSearch(value = '') {
+    let normalized = String(value).toLowerCase().replace(/[\s·・,，。.!！?？()（）\-_]/g, '');
+    RECIPE_SEARCH_ALIASES.forEach(([aliases, canonical]) => {
+        aliases.forEach(alias => { normalized = normalized.replaceAll(alias, canonical); });
+    });
+    return normalized;
+}
 
 async function fetchRecipeAPI(url, timeout = 10000) {
     const controller = new AbortController();
@@ -600,13 +617,14 @@ function initRecipes() {
     };
 
     const searchRecipes = () => {
-        const query = searchInput.value.trim().toLowerCase();
+        const rawQuery = searchInput.value.trim();
+        const query = normalizeRecipeSearch(rawQuery);
         currentMatches = recipeCatalog.filter(recipe => {
             const inCategory = activeCategory === '全部' || recipe.category === activeCategory;
-            const haystack = [recipe.name, recipe.category, recipe.summary || '', ...(recipe.aliases || []), ...(recipe.ingredients || [])].join(' ').toLowerCase();
+            const haystack = normalizeRecipeSearch([recipe.name, recipe.category, recipe.summary || '', ...(recipe.aliases || []), ...(recipe.ingredients || [])].join(' '));
             return inCategory && (!query || haystack.includes(query));
         });
-        searchStatus.textContent = query || activeCategory !== '全部' ? `找到 ${currentMatches.length} 道菜谱` : `共 ${recipeCatalog.length} 道完整菜谱`;
+        searchStatus.textContent = rawQuery || activeCategory !== '全部' ? `找到 ${currentMatches.length} 道菜谱` : `共 ${recipeCatalog.length} 道完整菜谱`;
         searchResults.innerHTML = currentMatches.length ? currentMatches.slice(0, visibleLimit).map(recipe => recipeCardHTML(recipe)).join('') : `<div class="recipe-empty-result">没有找到相关菜谱，换个菜名或分类试试。</div>`;
         loadMore.hidden = currentMatches.length <= visibleLimit;
         if (!loadMore.hidden) loadMore.textContent = `再加载 ${Math.min(24, currentMatches.length - visibleLimit)} 道`;
