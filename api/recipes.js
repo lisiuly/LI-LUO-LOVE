@@ -1,4 +1,5 @@
 const ALLOWED_ORIGINS = new Set(['https://lovelx.top', 'https://www.lovelx.top', 'https://li-luo-love.vercel.app']);
+const staticCatalog = require('../data/recipes.json');
 const CATEGORY_NAMES = {
     vegetable_dish: '素菜', meat_dish: '荤菜', aquatic: '水产', breakfast: '早餐', staple: '主食',
     'semi-finished': '半成品', soup: '汤与粥', drink: '饮品', condiment: '酱料', dessert: '甜品'
@@ -20,6 +21,10 @@ module.exports = async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(204).end();
     if (req.method !== 'GET') return res.status(405).json({ error:'仅支持 GET 请求' });
     try {
+        if (staticCatalog && Array.isArray(staticCatalog.recipes) && staticCatalog.recipes.length) {
+            res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=86400, stale-while-revalidate=604800');
+            return res.status(200).json(staticCatalog);
+        }
         const response = await fetch('https://raw.githubusercontent.com/Anduin2017/HowToCook/master/README.md', { signal:AbortSignal.timeout(10000) });
         if (!response.ok) throw new Error(`GitHub HTTP ${response.status}`);
         const readme = await response.text();

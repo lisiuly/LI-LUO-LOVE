@@ -462,9 +462,13 @@ async function fetchRecipeAPI(url, timeout = 10000) {
 }
 
 function recipeCardHTML(recipe) {
-    const localMeta = recipe.time ? `<span>${recipe.time} 分钟</span><span>${escapeHTML(recipe.difficulty)}</span>` : '<span>完整步骤</span>';
-    const summary = recipe.summary || '来自 HowToCook 的完整菜谱，点开查看食材、用量和制作步骤。';
-    return `<article class="recipe-result-card" data-category="${escapeHTML(recipe.category)}"><div class="recipe-card-icon" aria-hidden="true">${recipe.icon || '🍽️'}</div><div class="recipe-result-body"><div class="recipe-card-meta"><span>${escapeHTML(recipe.category)}</span>${localMeta}</div><h4>${escapeHTML(recipe.name)}</h4><p class="recipe-summary">${escapeHTML(summary)}</p><button type="button" class="recipe-view" data-recipe-id="${escapeHTML(recipe.id)}">查看完整做法</button></div></article>`;
+    const summary = recipe.summary || '来自 HowToCook 的完整菜谱，包含原料、用量和详细制作步骤。';
+    const difficultyValue = Number(recipe.difficulty);
+    const stars = Number.isFinite(difficultyValue) ? `${'★'.repeat(difficultyValue)}${'☆'.repeat(Math.max(0, 5 - difficultyValue))}` : (recipe.difficulty || '完整步骤');
+    const image = recipe.image
+        ? `<img src="${escapeHTML(recipe.image)}" alt="${escapeHTML(recipe.name)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="recipe-cover-fallback" hidden aria-hidden="true">${recipe.icon || '🍽️'}</div>`
+        : `<div class="recipe-cover-fallback" aria-hidden="true">${recipe.icon || '🍽️'}</div>`;
+    return `<article class="cookbook-recipe-card" data-category="${escapeHTML(recipe.category)}"><button type="button" class="recipe-view cookbook-card-hit" data-recipe-id="${escapeHTML(recipe.id)}" aria-label="查看${escapeHTML(recipe.name)}的完整做法">${image}<span class="cookbook-card-copy"><span class="cookbook-card-top"><strong>${escapeHTML(recipe.name)}</strong><span>${escapeHTML(recipe.category)}</span></span><span class="cookbook-card-stats"><span class="recipe-stars" aria-label="难度${recipe.difficulty || '未知'}">${stars}</span>${recipe.calories ? `<span>${Math.round(recipe.calories)} 千卡</span>` : ''}</span><span class="cookbook-card-summary">${escapeHTML(summary)}</span></span></button></article>`;
 }
 
 function renderRecipeDetail(recipe) {
@@ -560,7 +564,8 @@ async function renderRemoteRecipeDetail(recipe) {
         const response = await fetchRecipeAPI(`${RECIPE_API_BASE}/recipe?path=${encodeURIComponent(recipe.path)}`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || '菜谱加载失败');
-        panel.innerHTML = `<div class="recipe-detail-heading"><div><span class="recipe-detail-icon" aria-hidden="true">${recipe.icon || '🍽️'}</span><div><p>${escapeHTML(recipe.category)} · HowToCook</p><h3>${escapeHTML(recipe.name)}</h3></div></div><button class="recipe-detail-close" type="button" aria-label="关闭菜谱详情">关闭</button></div><div class="recipe-markdown"></div><div class="recipe-detail-actions"><button class="recipe-save-found" data-name="${escapeHTML(recipe.name)}" data-desc="来自 HowToCook 的完整菜谱">记入我们的食谱日记</button><a href="${escapeHTML(data.sourceUrl)}" target="_blank" rel="noopener">查看原始菜谱</a></div>`;
+        const similar = recipeCatalog.filter(item => item.category === recipe.category && item.id !== recipe.id).slice(0, 4);
+        panel.innerHTML = `<div class="recipe-detail-heading"><div><span class="recipe-detail-icon" aria-hidden="true">${recipe.icon || '🍽️'}</span><div><p>${escapeHTML(recipe.category)} · ${recipe.difficulty ? `${recipe.difficulty} 星难度` : '完整步骤'}${recipe.calories ? ` · ${Math.round(recipe.calories)} 千卡` : ''}</p><h3>${escapeHTML(recipe.name)}</h3></div></div><button class="recipe-detail-close" type="button" aria-label="关闭菜谱详情">返回列表</button></div><div class="recipe-markdown"></div><div class="recipe-detail-actions"><button class="recipe-save-found" data-name="${escapeHTML(recipe.name)}" data-desc="${escapeHTML(recipe.summary || '来自 HowToCook 的完整菜谱')}">记入我们的食谱日记</button><a href="${escapeHTML(data.sourceUrl)}" target="_blank" rel="noopener">查看原始菜谱</a></div>${similar.length ? `<section class="recipe-similar"><h4>同类菜谱</h4><div>${similar.map(item => `<button type="button" data-similar-id="${escapeHTML(item.id)}">${escapeHTML(item.name)}</button>`).join('')}</div></section>` : ''}`;
         panel.querySelector('.recipe-markdown').append(markdownToFragment(data.markdown, recipe.path));
     } catch (error) {
         panel.innerHTML = `<div class="recipe-detail-error"><strong>这道菜暂时打不开</strong><p>${escapeHTML(error.message)}，可以稍后再试。</p><button type="button" class="recipe-retry">重新加载</button><button type="button" class="recipe-detail-close">关闭</button></div>`;
@@ -605,57 +610,140 @@ function initRecipes() {
     const searchButton = document.getElementById('recipeSearchBtn');
     const searchStatus = document.getElementById('recipeSearchStatus');
     const searchResults = document.getElementById('recipeSearchResults');
-    const loadMore = document.getElementById('recipeLoadMore');
+    const pagination = document.getElementById('recipePagination');
+    const sortSelect = document.getElementById('recipeSort');
+    const ingredientFinder = document.getElementById('ingredientFinder');
+    const ingredientInput = document.getElementById('ingredientInput');
+    const ingredientSearch = document.getElementById('ingredientSearchBtn');
+    const cookbookMain = document.querySelector('.cookbook-main');
     const categoryNav = document.getElementById('recipeCategories');
     let activeCategory = '全部';
-    let visibleLimit = 24;
+    let activeMode = 'all';
+    let currentPage = 1;
+    const pageSize = 12;
     let currentMatches = [];
 
     const renderCategories = () => {
         const categories = ['全部', ...new Set(recipeCatalog.map(recipe => recipe.category))];
-        categoryNav.innerHTML = categories.map(category => `<button type="button" class="recipe-category${category === activeCategory ? ' active' : ''}" data-category="${escapeHTML(category)}">${escapeHTML(category)}</button>`).join('');
+        categoryNav.innerHTML = categories.map(category => {
+            const count = category === '全部' ? recipeCatalog.length : recipeCatalog.filter(recipe => recipe.category === category).length;
+            return `<button type="button" class="cookbook-category${category === activeCategory ? ' active' : ''}" data-category="${escapeHTML(category)}"><span>${escapeHTML(category)}</span><small>${count}</small></button>`;
+        }).join('');
+        document.getElementById('recipeTotalSide').textContent = recipeCatalog.length;
     };
 
-    const searchRecipes = () => {
+    const closeDetail = () => {
+        document.getElementById('recipeDetailPanel').hidden = true;
+        cookbookMain.classList.remove('showing-detail');
+    };
+
+    const renderPagination = totalPages => {
+        if (totalPages <= 1) { pagination.innerHTML = ''; return; }
+        const start = Math.max(1, currentPage - 2);
+        const end = Math.min(totalPages, currentPage + 2);
+        const pages = [];
+        for (let page = start; page <= end; page++) pages.push(`<button type="button" data-page="${page}" class="${page === currentPage ? 'active' : ''}" aria-current="${page === currentPage ? 'page' : 'false'}">${page}</button>`);
+        pagination.innerHTML = `<button type="button" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>上一页</button>${pages.join('')}<button type="button" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>`;
+    };
+
+    const searchRecipes = ({ resetPage = false } = {}) => {
+        if (resetPage) currentPage = 1;
+        closeDetail();
         const rawQuery = searchInput.value.trim();
         const query = normalizeRecipeSearch(rawQuery);
+        const ingredientTerms = ingredientInput.value.split(/[\s,，、]+/).map(normalizeRecipeSearch).filter(Boolean);
         currentMatches = recipeCatalog.filter(recipe => {
             const inCategory = activeCategory === '全部' || recipe.category === activeCategory;
-            const haystack = normalizeRecipeSearch([recipe.name, recipe.category, recipe.summary || '', ...(recipe.aliases || []), ...(recipe.ingredients || [])].join(' '));
-            return inCategory && (!query || haystack.includes(query));
+            const haystack = normalizeRecipeSearch([recipe.name, recipe.category, recipe.summary || '', recipe.keywords || '', ...(recipe.aliases || []), ...(recipe.ingredients || [])].join(' '));
+            const matchesQuery = !query || haystack.includes(query);
+            const matchesIngredients = activeMode !== 'ingredients' || !ingredientTerms.length || ingredientTerms.every(term => haystack.includes(term));
+            return inCategory && matchesQuery && matchesIngredients;
         });
-        searchStatus.textContent = rawQuery || activeCategory !== '全部' ? `找到 ${currentMatches.length} 道菜谱` : `共 ${recipeCatalog.length} 道完整菜谱`;
-        searchResults.innerHTML = currentMatches.length ? currentMatches.slice(0, visibleLimit).map(recipe => recipeCardHTML(recipe)).join('') : `<div class="recipe-empty-result">没有找到相关菜谱，换个菜名或分类试试。</div>`;
-        loadMore.hidden = currentMatches.length <= visibleLimit;
-        if (!loadMore.hidden) loadMore.textContent = `再加载 ${Math.min(24, currentMatches.length - visibleLimit)} 道`;
+
+        const sort = sortSelect.value;
+        currentMatches.sort((a,b) => {
+            if (sort === 'relevance' && query) {
+                const score = recipe => {
+                    const name = normalizeRecipeSearch(recipe.name);
+                    const summary = normalizeRecipeSearch(recipe.summary || '');
+                    if (name === query) return 1000;
+                    if (name.startsWith(query)) return 100;
+                    if (name.includes(query)) return 10;
+                    if (summary.includes(query)) return 3;
+                    return 1;
+                };
+                return score(b) - score(a) || a.name.localeCompare(b.name,'zh-CN');
+            }
+            if (sort === 'difficulty') return (a.difficulty || 99) - (b.difficulty || 99) || a.name.localeCompare(b.name,'zh-CN');
+            if (sort === 'calories') return (a.calories || Number.MAX_SAFE_INTEGER) - (b.calories || Number.MAX_SAFE_INTEGER) || a.name.localeCompare(b.name,'zh-CN');
+            return a.name.localeCompare(b.name,'zh-CN');
+        });
+
+        const totalPages = Math.max(1, Math.ceil(currentMatches.length / pageSize));
+        currentPage = Math.min(currentPage, totalPages);
+        const start = (currentPage - 1) * pageSize;
+        const context = activeMode === 'ingredients' && ingredientTerms.length ? `含 ${ingredientInput.value.trim()} 的` : rawQuery ? `“${rawQuery}”相关` : activeCategory !== '全部' ? `${activeCategory}分类` : '完整';
+        searchStatus.textContent = `找到 ${currentMatches.length} 道${context}菜谱${currentMatches.length ? ` · 第 ${currentPage}/${totalPages} 页` : ''}`;
+        searchResults.innerHTML = currentMatches.length ? currentMatches.slice(start, start + pageSize).map(recipeCardHTML).join('') : `<div class="recipe-empty-result"><strong>没有找到合适的菜</strong><span>减少一种食材、换个同义词，或清除分类后再试。</span></div>`;
+        renderPagination(totalPages);
     };
 
     renderCategories();
     searchRecipes();
-    const resetAndSearch = () => { visibleLimit = 24; searchRecipes(); };
-    searchButton.addEventListener('click', resetAndSearch);
-    searchInput.addEventListener('keydown', event => { if (event.key === 'Enter') resetAndSearch(); });
-    searchInput.addEventListener('input', resetAndSearch);
-    loadMore.addEventListener('click', () => { visibleLimit += 24; searchRecipes(); });
+    searchButton.addEventListener('click', () => searchRecipes({ resetPage:true }));
+    searchInput.addEventListener('keydown', event => { if (event.key === 'Enter') searchRecipes({ resetPage:true }); });
+    searchInput.addEventListener('input', () => searchRecipes({ resetPage:true }));
+    sortSelect.addEventListener('change', () => searchRecipes({ resetPage:true }));
+    ingredientSearch.addEventListener('click', () => searchRecipes({ resetPage:true }));
+    ingredientInput.addEventListener('keydown', event => { if (event.key === 'Enter') searchRecipes({ resetPage:true }); });
+    pagination.addEventListener('click', event => {
+        const button = event.target.closest('[data-page]');
+        if (!button || button.disabled) return;
+        currentPage = Number(button.dataset.page);
+        searchRecipes();
+        document.querySelector('.cookbook-results-toolbar').scrollIntoView({ behavior:'smooth', block:'start' });
+    });
     categoryNav.addEventListener('click', event => {
-        const button = event.target.closest('.recipe-category');
+        const button = event.target.closest('.cookbook-category');
         if (!button) return;
         activeCategory = button.dataset.category;
-        visibleLimit = 24;
-        categoryNav.querySelectorAll('.recipe-category').forEach(item => item.classList.toggle('active', item === button));
-        searchRecipes();
+        categoryNav.querySelectorAll('.cookbook-category').forEach(item => item.classList.toggle('active', item === button));
+        searchRecipes({ resetPage:true });
+    });
+    document.querySelectorAll('[data-recipe-mode]').forEach(button => button.addEventListener('click', () => {
+        activeMode = button.dataset.recipeMode;
+        document.querySelectorAll('[data-recipe-mode]').forEach(item => item.classList.toggle('active', item === button));
+        ingredientFinder.hidden = activeMode !== 'ingredients';
+        if (activeMode === 'all') ingredientInput.value = '';
+        searchRecipes({ resetPage:true });
+        if (activeMode === 'ingredients') ingredientInput.focus();
+    }));
+    document.getElementById('recipeRandomBtn').addEventListener('click', () => {
+        const pool = activeCategory === '全部' ? recipeCatalog : recipeCatalog.filter(recipe => recipe.category === activeCategory);
+        const recipe = pool[Math.floor(Math.random() * pool.length)];
+        if (recipe) { cookbookMain.classList.add('showing-detail'); renderRemoteRecipeDetail(recipe); }
     });
     searchResults.addEventListener('click', event => {
         const viewButton = event.target.closest('.recipe-view');
         if (!viewButton) return;
         const recipe = recipeCatalog.find(item => item.id === viewButton.dataset.recipeId);
-        if (recipe) recipe.path ? renderRemoteRecipeDetail(recipe) : renderRecipeDetail(recipe);
+        if (recipe) {
+            cookbookMain.classList.add('showing-detail');
+            recipe.path ? renderRemoteRecipeDetail(recipe) : renderRecipeDetail(recipe);
+        }
     });
 
     const detailPanel = document.getElementById('recipeDetailPanel');
     detailPanel.addEventListener('click', event => {
         if (event.target.closest('.recipe-detail-close')) {
-            detailPanel.hidden = true;
+            closeDetail();
+            document.querySelector('.cookbook-results-toolbar').scrollIntoView({ behavior:'smooth', block:'start' });
+            return;
+        }
+        const similarButton = event.target.closest('[data-similar-id]');
+        if (similarButton) {
+            const similarRecipe = recipeCatalog.find(item => item.id === similarButton.dataset.similarId);
+            if (similarRecipe) renderRemoteRecipeDetail(similarRecipe);
             return;
         }
         const saveFound = event.target.closest('.recipe-save-found');
@@ -706,7 +794,7 @@ function initRecipes() {
             if (!response.ok || !Array.isArray(data.recipes) || !data.recipes.length) throw new Error(data.error || '目录为空');
             recipeCatalog = data.recipes;
             activeCategory = '全部';
-            visibleLimit = 24;
+            currentPage = 1;
             renderCategories();
             searchRecipes();
         } catch (error) {
@@ -840,11 +928,13 @@ function initNavigation() {
         recipe: document.getElementById('page-recipe'),
         photos: document.getElementById('page-photos')
     };
+    document.body.dataset.activePage = 'home';
 
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const page = link.dataset.page;
+            document.body.dataset.activePage = page;
 
             // Update nav
             navLinks.forEach(l => l.classList.remove('active'));

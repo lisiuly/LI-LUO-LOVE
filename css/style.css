@@ -2419,6 +2419,144 @@ body::after {
     .footer-garden-name { font-size:14px; }
 }
 
+/* ===== Full cookbook application, ported from HowToCookViewer's MIT interaction model ===== */
+.cookbook-app {
+    display:grid;
+    grid-template-columns:224px minmax(0,1fr);
+    gap:20px;
+    align-items:start;
+    margin-bottom:24px;
+}
+.cookbook-sidebar {
+    position:sticky;
+    top:82px;
+    min-width:0;
+    padding:16px 12px;
+    border:1px solid #ead8ca;
+    border-radius:16px;
+    background:#fffdfb;
+    box-shadow:0 8px 24px rgba(94,59,43,.07);
+}
+.cookbook-brand { display:flex; align-items:center; gap:10px; padding:4px 7px 15px; margin-bottom:8px; border-bottom:1px solid #efe2d8; }
+.cookbook-brand > span { display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:#f8e8dc; font-size:21px; }
+.cookbook-brand strong, .cookbook-brand small { display:block; }
+.cookbook-brand strong { color:#654538; font-size:14px; }
+.cookbook-brand small { margin-top:2px; color:#a08070; font-size:10px; }
+.cookbook-side-action, .cookbook-category {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    min-height:40px;
+    padding:8px 10px;
+    border:0;
+    border-radius:10px;
+    background:transparent;
+    color:#765548;
+    cursor:pointer;
+    font:inherit;
+    font-size:12px;
+    text-align:left;
+}
+.cookbook-side-action:hover, .cookbook-category:hover { background:#f8eee7; }
+.cookbook-side-action.active, .cookbook-category.active { background:#704952; color:#fff; }
+.cookbook-side-action span, .cookbook-category small { color:inherit; opacity:.72; font-size:10px; }
+.cookbook-side-label { margin:17px 10px 6px; color:#a48779; font-size:10px; font-weight:800; letter-spacing:.08em; }
+.cookbook-category-list { display:grid; gap:2px; }
+.cookbook-license { display:grid; gap:5px; margin:16px 8px 2px; padding-top:12px; border-top:1px solid #efe2d8; }
+.cookbook-license a { color:#a17d6b; font-size:9px; text-decoration:none; }
+.cookbook-license a:hover { text-decoration:underline; }
+.cookbook-main { min-width:0; }
+.cookbook-search-hero {
+    padding:30px clamp(18px,4vw,40px);
+    border-radius:18px;
+    background:#563b48;
+    color:#fff;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(71,42,55,.16);
+}
+.cookbook-search-hero h2 { margin:0; color:#fff; font-size:clamp(24px,3vw,34px); letter-spacing:-.025em; }
+.cookbook-search-hero p { margin:7px 0 20px; color:#eadde2; font-size:13px; }
+.cookbook-search-box { display:flex; width:min(640px,100%); margin:0 auto; padding:4px; border-radius:13px; background:#fff; }
+.cookbook-search-box input { flex:1; min-width:0; min-height:46px; padding:0 14px; border:0; outline:0; background:transparent; color:#60434c; font:inherit; font-size:16px; }
+.cookbook-search-box button, .ingredient-finder-row button { min-width:82px; border:0; border-radius:10px; background:#c06f72; color:#fff; cursor:pointer; font:inherit; font-weight:800; }
+.cookbook-search-box button:hover, .ingredient-finder-row button:hover { background:#ae5e63; }
+.ingredient-finder { display:grid; grid-template-columns:minmax(0,.8fr) minmax(300px,1.2fr); align-items:center; gap:20px; margin-top:16px; padding:18px 20px; border-radius:14px; background:#fff5ed; }
+.ingredient-finder[hidden] { display:none; }
+.ingredient-finder h3 { margin:0 0 4px; color:#704d3d; font-size:16px; }
+.ingredient-finder p { margin:0; color:#9c7864; font-size:11px; }
+.ingredient-finder-row { display:flex; gap:8px; }
+.ingredient-finder-row input { flex:1; min-width:0; min-height:44px; padding:0 12px; border:1px solid #e2c4b1; border-radius:10px; background:#fff; color:#65483a; font:inherit; font-size:16px; }
+.ingredient-finder-row button { padding:0 14px; }
+.cookbook-results-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:20px 0 12px; scroll-margin-top:90px; }
+.cookbook-results-toolbar .recipe-search-status { margin:0; min-height:0; color:#765548; font-size:13px; font-weight:700; }
+.cookbook-results-toolbar label { display:flex; align-items:center; gap:7px; color:#977667; font-size:11px; white-space:nowrap; }
+.cookbook-results-toolbar select { min-height:36px; padding:0 30px 0 10px; border:1px solid #e4cfc1; border-radius:9px; background:#fffdfb; color:#765548; font:inherit; font-size:11px; }
+.cookbook-results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px; }
+.cookbook-recipe-card { min-width:0; overflow:hidden; border-radius:14px; background:#fff; box-shadow:0 5px 18px rgba(94,59,43,.09); }
+.cookbook-card-hit { display:flex; flex-direction:column; width:100%; height:100%; padding:0; border:0; background:#fff; color:inherit; cursor:pointer; text-align:left; }
+.cookbook-card-hit > img, .recipe-cover-fallback { width:100%; height:148px; object-fit:cover; }
+.recipe-cover-fallback { display:grid; place-items:center; background:#f3e5dc; font-size:40px; }
+.cookbook-card-copy { display:flex; flex:1; flex-direction:column; min-width:0; padding:13px 14px 15px; }
+.cookbook-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+.cookbook-card-top strong { min-width:0; overflow:hidden; color:#604438; font-size:15px; text-overflow:ellipsis; white-space:nowrap; }
+.cookbook-card-top > span { flex:0 0 auto; padding:3px 6px; border-radius:6px; background:#f1e5de; color:#8d6757; font-size:9px; }
+.cookbook-card-stats { display:flex; justify-content:space-between; gap:8px; margin-top:7px; color:#9d7967; font-size:9px; }
+.recipe-stars { color:#d18a48; letter-spacing:.04em; }
+.cookbook-card-summary { display:-webkit-box; margin-top:8px; overflow:hidden; color:#927263; font-size:10px; line-height:1.55; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+.cookbook-recipe-card:hover { box-shadow:0 10px 25px rgba(94,59,43,.14); transform:translateY(-2px); }
+.cookbook-recipe-card { transition:transform .18s ease,box-shadow .18s ease; }
+.recipe-pagination { display:flex; align-items:center; justify-content:center; gap:6px; margin:22px 0 6px; }
+.recipe-pagination:empty { display:none; }
+.recipe-pagination button { min-width:36px; min-height:36px; padding:6px 10px; border:1px solid #e3cfc1; border-radius:9px; background:#fff; color:#765548; cursor:pointer; font:inherit; font-size:11px; }
+.recipe-pagination button.active { border-color:#704952; background:#704952; color:#fff; }
+.recipe-pagination button:disabled { opacity:.4; cursor:default; }
+.recipe-empty-result { display:flex; flex-direction:column; gap:5px; }
+.recipe-empty-result strong { color:#714f41; }
+.recipe-empty-result span { color:#9b7867; }
+.cookbook-main.showing-detail .cookbook-results-toolbar,
+.cookbook-main.showing-detail .cookbook-results,
+.cookbook-main.showing-detail .recipe-pagination { display:none; }
+.cookbook-main.showing-detail .recipe-detail-panel { margin-top:18px; }
+.recipe-similar { margin-top:24px; padding-top:18px; border-top:1px solid #ead8ca; }
+.recipe-similar h4 { margin:0 0 10px; color:#69483a; }
+.recipe-similar > div { display:flex; flex-wrap:wrap; gap:8px; }
+.recipe-similar button { min-height:38px; padding:7px 11px; border:1px solid #e1c8b6; border-radius:9px; background:#fff; color:#805c4c; cursor:pointer; font:inherit; font-size:11px; }
+
+@media (max-width:1000px) {
+    .cookbook-results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+@media (max-width:760px) {
+    .cookbook-app { display:block; }
+    .cookbook-sidebar { position:static; display:flex; gap:7px; overflow-x:auto; margin-bottom:12px; padding:9px; scrollbar-width:none; }
+    .cookbook-brand { flex:0 0 auto; min-width:154px; margin:0; padding:2px 10px 2px 3px; border:0; border-right:1px solid #efe2d8; }
+    .cookbook-brand > span { width:34px; height:34px; }
+    .cookbook-side-action { flex:0 0 auto; width:auto; min-height:38px; white-space:nowrap; }
+    .cookbook-side-action span { margin-left:7px; }
+    .cookbook-side-label, .cookbook-category-list, .cookbook-license { display:none; }
+    .cookbook-search-hero { padding:23px 14px; border-radius:15px; }
+    .cookbook-search-hero h2 { font-size:25px; }
+    .cookbook-search-hero p { margin-bottom:15px; }
+    .cookbook-search-box button { min-width:68px; }
+    .ingredient-finder { grid-template-columns:1fr; gap:12px; padding:15px; }
+    .cookbook-results-toolbar { align-items:flex-start; flex-direction:column; gap:8px; }
+    .cookbook-results-toolbar label { width:100%; justify-content:space-between; }
+    .cookbook-results-toolbar select { flex:1; }
+    .cookbook-results { grid-template-columns:1fr; }
+    .cookbook-recipe-card { border-radius:13px; }
+    .cookbook-card-hit { display:grid; grid-template-columns:108px minmax(0,1fr); min-height:122px; }
+    .cookbook-card-hit > img, .recipe-cover-fallback { width:108px; height:100%; min-height:122px; }
+    .cookbook-card-copy { padding:13px; }
+    .cookbook-card-summary { -webkit-line-clamp:2; }
+    .recipe-pagination { flex-wrap:wrap; }
+    body[data-active-page="recipe"] .music-player { transform:none; }
+    body[data-active-page="recipe"] .music-controls { max-width:none; padding:7px; }
+    body[data-active-page="recipe"] .music-songname,
+    body[data-active-page="recipe"] .music-add,
+    body[data-active-page="recipe"] .music-credit { display:none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
 }

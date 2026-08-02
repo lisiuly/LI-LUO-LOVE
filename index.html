@@ -295,26 +295,42 @@
 
             <!-- ===== 食谱日记 ===== -->
             <section id="page-recipe" class="page">
-                <h2 class="page-title">🍳 食谱日记</h2>
-                <p class="page-desc">搜做法、看推荐，也把今天做过的菜留下来 😋</p>
+                <div class="cookbook-app">
+                    <aside class="cookbook-sidebar" aria-label="菜谱浏览">
+                        <div class="cookbook-brand"><span aria-hidden="true">🍳</span><div><strong>我们的菜谱库</strong><small>HowToCook 完整内容</small></div></div>
+                        <button type="button" class="cookbook-side-action active" data-recipe-mode="all">全部菜谱 <span id="recipeTotalSide">368</span></button>
+                        <button type="button" class="cookbook-side-action" id="recipeRandomBtn">随便吃什么</button>
+                        <button type="button" class="cookbook-side-action" data-recipe-mode="ingredients">按现有食材找菜</button>
+                        <div class="cookbook-side-label">分类</div>
+                        <div id="recipeCategories" class="cookbook-category-list"></div>
+                        <div class="cookbook-license"><a href="https://github.com/Anduin2017/HowToCook" target="_blank" rel="noopener">HowToCook · Unlicense</a><a href="https://github.com/AiursoftWeb/HowToCookViewer" target="_blank" rel="noopener">Viewer design · MIT</a></div>
+                    </aside>
 
-                <div class="recipe-search-card">
-                    <div class="recipe-search-heading">
-                        <div><h3>今天想做什么？</h3><p>按分类找菜，也可以直接搜食材或菜名</p></div>
-                        <a class="recipe-project-link" href="https://github.com/Anduin2017/HowToCook" target="_blank" rel="noopener">灵感来自 HowToCook</a>
+                    <div class="cookbook-main">
+                        <header class="cookbook-search-hero">
+                            <h2>今天想做什么？</h2>
+                            <p>搜索菜名、食材或做法，从完整菜谱里挑一道。</p>
+                            <div class="cookbook-search-box">
+                                <label class="sr-only" for="recipeSearchInput">搜索菜谱</label>
+                                <input type="search" id="recipeSearchInput" placeholder="例如：番茄炒鸡蛋、土豆、下饭菜" maxlength="40">
+                                <button id="recipeSearchBtn" type="button">搜索</button>
+                            </div>
+                        </header>
+
+                        <section class="ingredient-finder" id="ingredientFinder" hidden>
+                            <div><h3>冰箱里有什么？</h3><p>输入一种或多种食材，用空格或逗号分开。</p></div>
+                            <div class="ingredient-finder-row"><input type="text" id="ingredientInput" placeholder="例如：鸡蛋 西红柿 土豆" maxlength="80"><button type="button" id="ingredientSearchBtn">帮我找菜</button></div>
+                        </section>
+
+                        <div class="cookbook-results-toolbar">
+                            <div id="recipeSearchStatus" class="recipe-search-status" aria-live="polite"></div>
+                            <label>排序<select id="recipeSort"><option value="relevance">相关度</option><option value="name">按菜名</option><option value="difficulty">难度从低到高</option><option value="calories">热量从低到高</option></select></label>
+                        </div>
+                        <div id="recipeSearchResults" class="cookbook-results"></div>
+                        <nav id="recipePagination" class="recipe-pagination" aria-label="菜谱分页"></nav>
+                        <section class="recipe-detail-panel" id="recipeDetailPanel" hidden aria-live="polite"></section>
                     </div>
-                    <div class="recipe-search-row">
-                        <label class="sr-only" for="recipeSearchInput">搜索菜名</label>
-                        <input type="search" id="recipeSearchInput" placeholder="搜菜名或食材，例如：鸡蛋、鸡翅" maxlength="40">
-                        <button id="recipeSearchBtn" class="add-btn">搜索菜谱</button>
-                    </div>
-                    <div class="recipe-categories" id="recipeCategories" aria-label="菜谱分类"></div>
-                    <div id="recipeSearchStatus" class="recipe-search-status" aria-live="polite"></div>
-                    <div id="recipeSearchResults" class="recipe-search-results"></div>
-                    <button type="button" id="recipeLoadMore" class="recipe-load-more" hidden>加载更多菜谱</button>
                 </div>
-
-                <section class="recipe-detail-panel" id="recipeDetailPanel" hidden aria-live="polite"></section>
 
                 <div class="recipe-form-card">
                     <div class="recipe-form-heading"><div><h3>记录我们做过的菜</h3><p>味道、改动和想对彼此说的话，都留在这里</p></div><span>保存在这台设备</span></div>
